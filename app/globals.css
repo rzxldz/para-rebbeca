@@ -908,10 +908,19 @@ h1 span {
 .finalActions {
   margin-top: 38px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 14px;
+}
+
+.finalActions .finalPrimaryButton,
+.finalActions .finalSecondaryButton,
+.finalActions .finalTextButton {
+  width: min(100%, 430px);
+  justify-content: center;
+  text-align: center;
 }
 
 .finalPrimaryButton,
@@ -936,16 +945,6 @@ h1 span {
   color: #2b151d;
 }
 
-.finalPrimaryButton span {
-  width: 27px;
-  height: 27px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #2b151d;
-  color: #ffffff;
-  font-size: 0.7rem;
-}
 
 .finalSecondaryButton {
   padding: 15px 23px;
@@ -1920,84 +1919,136 @@ h1 span {
   }
 }
 
-.playlistButton {
-  width: min(100%, 420px);
-  min-height: 62px;
-  padding: 12px 22px;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 13px;
-
-  border-radius: 999px;
-  background: #1ed760;
-  color: #08110b;
-
-  font-size: 16px;
-  font-weight: 750;
-  line-height: 1.2;
-  text-align: center;
-  text-decoration: none;
-
-  box-shadow: 0 12px 30px rgba(30, 215, 96, 0.24);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    background-color 180ms ease;
+.snoopyFinalScene {
+  position: relative;
+  width: min(100%, 380px);
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
 }
 
-.playlistButton:hover {
-  transform: translateY(-2px);
-  background: #20e468;
-  box-shadow: 0 16px 36px rgba(30, 215, 96, 0.32);
-}
-
-.playlistButton:active {
-  transform: translateY(0);
-}
-
-.playlistLogoWrapper {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-
-  display: grid;
-  place-items: center;
-}
-
-.playlistSpotifyLogo {
-  width: 34px;
-  height: 34px;
-}
-
-.playlistButtonText {
+.snoopyOutlineSvg {
+  width: 100%;
+  height: auto;
   display: block;
-  max-width: 300px;
+  overflow: visible;
+  filter:
+    drop-shadow(0 0 6px rgba(244, 214, 221, 0.24))
+    drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
 }
+
+.snoopyOutlinePath,
+.snoopyOutlineHeart {
+  fill: none;
+  stroke-width: 4.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.snoopyOutlineFeature {
+  fill: #f4d6dd;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.snoopyOutlineHeart {
+  stroke: #dc6d8a;
+  stroke-width: 4;
+}
+
 @media (max-width: 520px) {
-  .playlistButton {
-    width: 100%;
-    min-height: 58px;
-    padding: 11px 17px;
-    gap: 10px;
-
-    font-size: 14px;
+  .snoopyFinalScene {
+    width: min(100%, 330px);
   }
 
-  .playlistLogoWrapper {
-    width: 31px;
-    height: 31px;
-    flex-basis: 31px;
-  }
-
-  .playlistSpotifyLogo {
-    width: 30px;
-    height: 30px;
-  }
-
-  .playlistButtonText {
-    max-width: 230px;
+  .snoopyOutlinePath {
+    stroke-width: 4.2;
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .snoopyMovingOutline,
+  .snoopyOutlineBouquet,
+  .snoopyOutlineHeart {
+    animation: none;
+  }
+}
+
+/* Snoopy fuera de la carta */
+.snoopyOutsideLetter {
+  width: 100%;
+  margin: 34px auto 26px;
+  display: flex;
+  justify-content: center;
+}
+
+.snoopyOutsideLetter .snoopyFinalScene {
+  margin: 0;
+}
+
+/* Botón final de Spotify: conserva el diseño rosado original */
+.finalSpotifyButton {
+  min-height: 58px;
+  max-width: 100%;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.finalSpotifyButtonLogo {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: block;
+  object-fit: contain;
+}
+
+.finalSpotifyButtonText {
+  width: auto;
+  height: auto;
+  display: inline;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+@media (max-width: 650px) {
+  .snoopyOutsideLetter {
+    margin-top: 28px;
+    margin-bottom: 22px;
+  }
+
+  .finalSpotifyButton {
+    width: 100%;
+    padding: 14px 18px;
+    gap: 10px;
+  }
+
+  .finalSpotifyButtonLogo {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+
+  .finalSpotifyButtonText {
+    font-size: 0.88rem;
+  }
+}
+
+/* Botones “Escuchar en Spotify” de cada canción */
+.songSpotifyButton {
+  align-self: flex-start;
+  margin-top: 34px;
+}
+
+@media (max-width: 650px) {
+  .songSpotifyButton {
+    align-self: stretch;
+  }
+}

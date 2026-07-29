@@ -1254,133 +1254,311 @@ const songVariants = {
   }),
 };
 
-const snoopyFlowers = [
-  { id: 1, symbol: "✿", left: "5%", top: "68%", delay: 0 },
-  { id: 2, symbol: "❀", left: "14%", top: "76%", delay: 0.3 },
-  { id: 3, symbol: "✿", left: "25%", top: "70%", delay: 0.6 },
-  { id: 4, symbol: "❀", left: "38%", top: "79%", delay: 0.2 },
-  { id: 5, symbol: "✿", left: "52%", top: "73%", delay: 0.8 },
-  { id: 6, symbol: "❀", left: "66%", top: "80%", delay: 0.4 },
-  { id: 7, symbol: "✿", left: "78%", top: "72%", delay: 0.7 },
-  { id: 8, symbol: "❀", left: "89%", top: "78%", delay: 0.1 },
+const snoopyOutlinePaths = [
+  {
+    id: "head",
+    d: "M104 111 C88 96 82 76 89 58 C96 39 116 29 138 31 C160 32 178 42 189 57 C200 72 214 80 239 81 C258 82 274 91 279 103 C284 115 275 127 261 129 C244 132 228 123 219 112 C211 102 203 97 192 96 C181 95 171 100 165 110 C157 123 144 130 128 128 C118 127 111 121 104 111 Z",
+    stroke: "#f4d6dd",
+    delay: 0,
+  },
+  {
+    id: "ear",
+    d: "M116 44 C99 54 94 75 101 95 C107 112 120 123 133 121 C146 119 151 105 147 90 C143 73 131 54 116 44 Z",
+    stroke: "#f4d6dd",
+    delay: 0.18,
+  },
+  {
+    id: "body",
+    d: "M137 128 C132 144 130 162 135 181 C140 200 151 216 168 224 C185 232 205 231 219 220 C232 209 237 192 233 174 C228 153 211 139 190 135 C171 132 153 136 137 128 Z",
+    stroke: "#f4d6dd",
+    delay: 0.36,
+  },
+  {
+    id: "right-arm",
+    d: "M189 151 C210 153 228 162 242 176 C248 182 248 190 243 195 C238 200 230 199 224 193 C213 183 199 177 183 176",
+    stroke: "#f4d6dd",
+    delay: 0.54,
+  },
+  {
+    id: "left-arm",
+    d: "M136 161 C120 165 110 176 105 191 C101 204 106 217 116 224",
+    stroke: "#f4d6dd",
+    delay: 0.68,
+  },
+  {
+    id: "left-foot",
+    d: "M142 221 C129 224 117 232 113 242 C109 253 118 260 132 259 C148 258 158 249 163 238",
+    stroke: "#f4d6dd",
+    delay: 0.82,
+  },
+  {
+    id: "right-foot",
+    d: "M188 228 C178 233 171 242 173 251 C175 260 186 263 200 260 C215 256 224 247 226 236",
+    stroke: "#f4d6dd",
+    delay: 0.96,
+  },
+  {
+    id: "tail",
+    d: "M132 153 C113 150 98 151 87 157 C77 163 77 172 87 176 C98 180 111 175 120 168",
+    stroke: "#f4d6dd",
+    delay: 1.1,
+  },
+  {
+    id: "neck",
+    d: "M148 132 C158 137 171 138 184 135",
+    stroke: "#f4d6dd",
+    delay: 1.24,
+  },
+  {
+    id: "collar",
+    d: "M152 139 C160 144 172 144 181 140",
+    stroke: "#dc6d8a",
+    delay: 1.38,
+  },
+  {
+    id: "smile",
+    d: "M201 89 C208 95 217 96 223 91",
+    stroke: "#f4d6dd",
+    delay: 1.52,
+  },
+];
+
+const snoopyBouquetPaths = [
+  {
+    id: "stem-one",
+    d: "M226 194 C244 200 260 210 272 224",
+    stroke: "#7ca07e",
+    delay: 1.72,
+  },
+  {
+    id: "stem-two",
+    d: "M230 190 C251 195 270 202 286 213",
+    stroke: "#7ca07e",
+    delay: 1.84,
+  },
+  {
+    id: "stem-three",
+    d: "M235 188 C253 187 274 190 294 198",
+    stroke: "#7ca07e",
+    delay: 1.96,
+  },
+  {
+    id: "flower-one",
+    d: "M265 206 C260 197 265 188 274 186 C283 184 290 191 288 199 C286 207 278 211 271 208 C264 205 261 197 265 190",
+    stroke: "#f0a9bd",
+    delay: 2.1,
+  },
+  {
+    id: "flower-two",
+    d: "M282 199 C278 189 284 180 294 180 C303 180 309 188 306 197 C303 206 294 209 287 205 C280 201 279 193 283 187",
+    stroke: "#f4d6dd",
+    delay: 2.24,
+  },
+  {
+    id: "flower-three",
+    d: "M246 215 C241 206 245 197 254 194 C263 192 271 198 270 207 C269 216 261 221 253 218 C246 216 243 208 246 201",
+    stroke: "#e08aa5",
+    delay: 2.38,
+  },
+  {
+    id: "ribbon-center",
+    d: "M256 221 C267 222 278 221 289 216",
+    stroke: "#dc6d8a",
+    delay: 2.52,
+  },
+  {
+    id: "ribbon-left",
+    d: "M271 219 C268 225 265 231 263 238",
+    stroke: "#dc6d8a",
+    delay: 2.62,
+  },
+  {
+    id: "ribbon-right",
+    d: "M271 219 C276 225 281 230 286 234",
+    stroke: "#dc6d8a",
+    delay: 2.72,
+  },
 ];
 
 function SnoopyWithFlowers() {
   return (
     <motion.div
-      className="snoopyFlowerScene"
-      initial={{
-        opacity: 0,
-        y: 30,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-      }}
-      viewport={{
-        once: true,
-        amount: 0.4,
-      }}
-      transition={{
-        duration: 0.9,
-        ease: "easeOut",
-      }}
-      aria-label="Snoopy sosteniendo un ramo de flores"
+      className="snoopyFinalScene"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      aria-label="Snoopy dibujado en relieve sosteniendo flores"
     >
-      {snoopyFlowers.map((flower) => (
-        <span
-          key={flower.id}
-          className="snoopyGroundFlower"
-          style={{
-            left: flower.left,
-            top: flower.top,
-            animationDelay: `${flower.delay}s`,
+      <svg
+        className="snoopyOutlineSvg"
+        viewBox="55 20 285 250"
+        role="img"
+        aria-hidden="true"
+      >
+        <motion.g
+          className="snoopyMovingOutline"
+          animate={{
+            y: [0, -4, 0],
+            rotate: [0, -0.7, 0, 0.7, 0],
           }}
-          aria-hidden="true"
+          transition={{
+            duration: 4.8,
+            delay: 3.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          style={{
+            transformBox: "fill-box",
+            transformOrigin: "center bottom",
+          }}
         >
-          {flower.symbol}
-        </span>
-      ))}
+          {snoopyOutlinePaths.map((line) => (
+            <motion.path
+              key={line.id}
+              className="snoopyOutlinePath"
+              d={line.d}
+              stroke={line.stroke}
+              initial={{
+                pathLength: 0,
+                opacity: 0,
+              }}
+              animate={{
+                pathLength: 1,
+                opacity: 1,
+              }}
+              transition={{
+                pathLength: {
+                  duration: 0.9,
+                  delay: line.delay,
+                  ease: "easeInOut",
+                },
+                opacity: {
+                  duration: 0.15,
+                  delay: line.delay,
+                },
+              }}
+            />
+          ))}
 
-      <motion.div
-        className="snoopyCharacter"
-        animate={{
-          y: [0, -5, 0],
-          rotate: [0, -1, 0, 1, 0],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        <div className="snoopyTail" />
+          <motion.ellipse
+            className="snoopyOutlineFeature"
+            cx="277"
+            cy="104"
+            rx="10"
+            ry="8"
+            transform="rotate(10 277 104)"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              delay: 1.58,
+              duration: 0.35,
+              type: "spring",
+            }}
+          />
 
-        <div className="snoopyBody">
-          <div className="snoopyCollar" />
-        </div>
+          <motion.ellipse
+            className="snoopyOutlineFeature"
+            cx="192"
+            cy="72"
+            rx="3.5"
+            ry="6"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              delay: 1.65,
+              duration: 0.3,
+              type: "spring",
+            }}
+          />
 
-        <div className="snoopyEar" />
+          <motion.g
+            className="snoopyOutlineBouquet"
+            animate={{
+              rotate: [-1.8, 2.2, -1.8],
+            }}
+            transition={{
+              duration: 3.2,
+              delay: 3.25,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            style={{
+              transformBox: "fill-box",
+              transformOrigin: "left bottom",
+            }}
+          >
+            {snoopyBouquetPaths.map((line) => (
+              <motion.path
+                key={line.id}
+                className="snoopyOutlinePath"
+                d={line.d}
+                stroke={line.stroke}
+                initial={{
+                  pathLength: 0,
+                  opacity: 0,
+                }}
+                animate={{
+                  pathLength: 1,
+                  opacity: 1,
+                }}
+                transition={{
+                  pathLength: {
+                    duration: 0.72,
+                    delay: line.delay,
+                    ease: "easeInOut",
+                  },
+                  opacity: {
+                    duration: 0.15,
+                    delay: line.delay,
+                  },
+                }}
+              />
+            ))}
+          </motion.g>
+        </motion.g>
 
-        <div className="snoopyHead">
-          <div className="snoopyEye" />
-          <div className="snoopyEyebrow" />
-        </div>
-
-        <div className="snoopySnout">
-          <div className="snoopyNose" />
-          <div className="snoopySmile" />
-        </div>
-
-        <div className="snoopyArm snoopyArmLeft" />
-        <div className="snoopyArm snoopyArmRight" />
-
-        <div className="snoopyFoot snoopyFootLeft" />
-        <div className="snoopyFoot snoopyFootRight" />
-      </motion.div>
-
-      <motion.div
-        className="snoopyBouquet"
-        animate={{
-          rotate: [-2, 2, -2],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        aria-hidden="true"
-      >
-        <span className="bouquetFlower bouquetFlowerOne">🌸</span>
-        <span className="bouquetFlower bouquetFlowerTwo">🌼</span>
-        <span className="bouquetFlower bouquetFlowerThree">🌷</span>
-        <span className="bouquetFlower bouquetFlowerFour">🌸</span>
-        <span className="bouquetStem bouquetStemOne" />
-        <span className="bouquetStem bouquetStemTwo" />
-        <span className="bouquetStem bouquetStemThree" />
-        <span className="bouquetRibbon">♥</span>
-      </motion.div>
-
-      <motion.span
-        className="snoopyFloatingHeart"
-        aria-hidden="true"
-        animate={{
-          y: [0, -12, 0],
-          scale: [1, 1.15, 1],
-          opacity: [0.65, 1, 0.65],
-        }}
-        transition={{
-          duration: 2.8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        ♥
-      </motion.span>
-
-      <p className="snoopyFlowerCaption">
-        Para ti, con mucho cariño
-      </p>
+        <motion.path
+          className="snoopyOutlineHeart"
+          d="M302 57 C302 48 314 45 319 53 C324 45 337 48 337 58 C337 70 319 81 319 81 C319 81 302 69 302 57 Z"
+          initial={{
+            pathLength: 0,
+            opacity: 0,
+          }}
+          animate={{
+            pathLength: 1,
+            opacity: 1,
+            scale: [1, 1.08, 1],
+            y: [0, -4, 0],
+          }}
+          transition={{
+            pathLength: {
+              duration: 0.8,
+              delay: 2.86,
+              ease: "easeInOut",
+            },
+            opacity: {
+              duration: 0.2,
+              delay: 2.86,
+            },
+            scale: {
+              duration: 2.2,
+              delay: 3.55,
+              repeat: Infinity,
+              ease: "easeInOut",
+            },
+            y: {
+              duration: 2.2,
+              delay: 3.55,
+              repeat: Infinity,
+              ease: "easeInOut",
+            },
+          }}
+          style={{
+            transformBox: "fill-box",
+            transformOrigin: "center",
+          }}
+        />
+      </svg>
     </motion.div>
   );
 }
@@ -2430,13 +2608,22 @@ function restartExperience() {
 </button>
 
             <a
-              className="spotifyButton"
+              className="finalPrimaryButton finalSpotifyButton songSpotifyButton"
               href={currentSong.spotifyUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="spotifyIcon">▶</span>
-              Escuchar en Spotify
+              <Image
+                src="/spotify-logo.png"
+                alt="Spotify"
+                width={30}
+                height={30}
+                className="finalSpotifyButtonLogo"
+              />
+
+              <span className="finalSpotifyButtonText">
+                Escuchar en Spotify
+              </span>
             </a>
           </div>
         </motion.article>
@@ -2936,10 +3123,14 @@ function restartExperience() {
             contigo?
           </p>
 
-          <span className="finalSignature">Con cariño, Emmanuel Roldan</span>
+          <span className="finalSignature">
+            Con cariño, Emmanuel Roldan
+          </span>
         </motion.div>
 
-                <SnoopyWithFlowers />
+        <div className="snoopyOutsideLetter">
+          <SnoopyWithFlowers />
+        </div>
 
         <motion.div
           className="finalActions"
@@ -2947,27 +3138,24 @@ function restartExperience() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
         >
+          <a
+            className="finalPrimaryButton finalSpotifyButton"
+            href={playlistUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/spotify-logo.png"
+              alt="Spotify"
+              width={30}
+              height={30}
+              className="finalSpotifyButtonLogo"
+            />
 
-<a
-  className="finalPrimaryButton playlistButton"
-  href={playlistUrl}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <span className="playlistLogoWrapper">
-    <Image
-      src="/spotify-logo.png"
-      alt="Spotify"
-      width={34}
-      height={34}
-      className="playlistSpotifyLogo"
-    />
-  </span>
-
-  <span className="playlistButtonText">
-    Abrir la playlist completa en Spotify
-  </span>
-</a>
+            <span className="finalSpotifyButtonText">
+              Abrir la playlist completa en Spotify
+            </span>
+          </a>
 
           <button
             type="button"
