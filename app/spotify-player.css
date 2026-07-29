@@ -1,0 +1,120 @@
+.spotifyFloatingPlayer {
+  position: fixed;
+  z-index: 8500;
+  right: 18px;
+  bottom: 18px;
+  width: min(430px, calc(100% - 36px));
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 24px;
+  background: rgba(24, 13, 18, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(25px);
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s ease;
+}
+
+.spotifyFloatingPlayerVisible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.spotifySnippetHeader {
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.spotifySnippetInformation {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.spotifySnippetInformation small {
+  color: #dda0ae;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spotifySnippetInformation strong {
+  overflow: hidden;
+  color: #f8eee8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.92rem;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotifySnippetInformation span {
+  color: rgba(248, 238, 232, 0.55);
+  font-size: 0.67rem;
+}
+
+.spotifySnippetControl {
+  flex: 0 0 auto;
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: #efc6d0;
+  color: #311720;
+  font-size: 1rem;
+}
+
+.spotifySnippetControl:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.spotifyEmbedHost {
+  min-height: 80px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.spotifyEmbedHost iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+}
+
+.spotifySnippetStatus {
+  margin: 8px 2px 0;
+  color: rgba(248, 238, 232, 0.5);
+  font-size: 0.62rem;
+  text-align: center;
+}
+
+.welcomeButton:disabled,
+.continueButton:disabled,
+.continueExperienceButton:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+@media (max-width: 800px) {
+  .spotifyFloatingPlayer {
+    right: 14px;
+    bottom: calc(104px + env(safe-area-inset-bottom));
+    left: 14px;
+    width: auto;
+  }
+}
