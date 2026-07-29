@@ -2608,23 +2608,23 @@ function restartExperience() {
 </button>
 
             <a
-              className="finalPrimaryButton finalSpotifyButton songSpotifyButton"
-              href={currentSong.spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                src="/spotify-logo.png"
-                alt="Spotify"
-                width={30}
-                height={30}
-                className="finalSpotifyButtonLogo"
-              />
+  className="finalPrimaryButton finalSpotifyButton"
+  href={currentSong.spotifyUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Image
+    src="/spotify-logo.png"
+    alt="Spotify"
+    width={30}
+    height={30}
+    className="finalSpotifyButtonLogo"
+  />
 
-              <span className="finalSpotifyButtonText">
-                Escuchar en Spotify
-              </span>
-            </a>
+  <span className="finalSpotifyButtonText">
+    Escuchar en Spotify
+  </span>
+</a>
           </div>
         </motion.article>
       </AnimatePresence>
