@@ -2815,15 +2815,15 @@ function restartExperience() {
           transition={{ delay: 2, duration: 0.8 }}
         >
 <a
+  className="finalPrimaryButton playlistButton"
   href={playlistUrl}
   target="_blank"
   rel="noopener noreferrer"
-  className="playlistButton"
 >
   <span className="playlistLogoWrapper">
     <Image
       src="/spotify-logo.png"
-      alt=""
+      alt="Spotify"
       width={34}
       height={34}
       className="playlistSpotifyLogo"
