@@ -2820,8 +2820,14 @@ function restartExperience() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span>▶</span>
-            Abrir la playlist completa en Spotify
+            <Image
+  src="/spotify-logo.png"
+  alt="Spotify"
+  width={22}
+  height={22}
+/>
+
+<span>Abrir la playlist completa en Spotify</span>
           </a>
 
           <button
