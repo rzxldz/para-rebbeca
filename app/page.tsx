@@ -1250,6 +1250,22 @@ const preludeStars = Array.from({ length: 24 }, (_, index) => ({
 
 const progressStorageKey = "para-regina-progress";
 const favoritesStorageKey = "para-regina-favorites";
+const audioPreferencesStorageKey = "para-regina-audio-preferences";
+
+type ExperienceStage =
+  | "intro"
+  | "heart"
+  | "songs"
+  | "prelude"
+  | "final";
+
+const experienceStages: ExperienceStage[] = [
+  "intro",
+  "heart",
+  "songs",
+  "prelude",
+  "final",
+];
 
 const songVariants = {
   enter: (direction: number) => ({
@@ -1631,9 +1647,18 @@ export default function Home() {
   const [showFinalPrelude, setShowFinalPrelude] = useState(false);
   const [showSongIndex, setShowSongIndex] = useState(false);
 
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [initialLoadProgress, setInitialLoadProgress] = useState(8);
   const [savedSongIndex, setSavedSongIndex] = useState<number | null>(null);
+  const [savedStage, setSavedStage] =
+    useState<ExperienceStage>("intro");
   const [visitedSongs, setVisitedSongs] = useState<string[]>([]);
   const [hasLoadedProgress, setHasLoadedProgress] = useState(false);
+
+  const [secretTapCount, setSecretTapCount] = useState(0);
+  const [showSecretNote, setShowSecretNote] = useState(false);
+  const [showRestartConfirmation, setShowRestartConfirmation] =
+    useState(false);
 
   const [favoriteSongs, setFavoriteSongs] = useState<string[]>([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
@@ -1657,13 +1682,99 @@ export default function Home() {
   const [audioError, setAudioError] = useState<string | null>(null);
 
   const [audioDurationSeconds, setAudioDurationSeconds] =
-  useState(0);
+    useState(0);
+  const [audioVolume, setAudioVolume] = useState(0.72);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [hasLoadedAudioPreferences, setHasLoadedAudioPreferences] =
+    useState(false);
 
   /*
     Se conserva este nombre porque la interfaz visual ya lo utiliza.
     El audio real proviene de /public/audio, no de la API de Spotify.
   */
   const spotifyReady = true;
+
+
+useEffect(() => {
+  let isActive = true;
+  let completedAssets = 0;
+
+  const criticalImages = [
+    "/spotify-logo.png",
+    songs[0].cover,
+    songs[1].cover,
+    songs[2].cover,
+    songs[3].cover,
+  ];
+
+  const updateProgress = () => {
+    completedAssets += 1;
+
+    if (!isActive) {
+      return;
+    }
+
+    const percentage =
+      12 + Math.round((completedAssets / criticalImages.length) * 78);
+
+    setInitialLoadProgress(Math.min(90, percentage));
+  };
+
+  const preloadImage = (source: string) =>
+    new Promise<void>((resolve) => {
+      const image = new window.Image();
+
+      const finish = () => {
+        updateProgress();
+        resolve();
+      };
+
+      image.onload = finish;
+      image.onerror = finish;
+      image.src = source;
+    });
+
+  const minimumDisplayTime = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, 1100);
+  });
+
+  const fontReadiness =
+    "fonts" in document
+      ? document.fonts.ready.then(() => undefined)
+      : Promise.resolve();
+
+  void Promise.all([
+    Promise.all(criticalImages.map(preloadImage)),
+    minimumDisplayTime,
+    fontReadiness,
+  ]).then(() => {
+    if (!isActive) {
+      return;
+    }
+
+    setInitialLoadProgress(100);
+
+    window.setTimeout(() => {
+      if (isActive) {
+        setIsInitialLoading(false);
+      }
+    }, 320);
+  });
+
+  const emergencyTimeout = window.setTimeout(() => {
+    if (!isActive) {
+      return;
+    }
+
+    setInitialLoadProgress(100);
+    setIsInitialLoading(false);
+  }, 6500);
+
+  return () => {
+    isActive = false;
+    window.clearTimeout(emergencyTimeout);
+  };
+}, []);
 
 useEffect(() => {
   try {
@@ -1677,6 +1788,7 @@ useEffect(() => {
     const parsedProgress = JSON.parse(savedProgress) as {
       songIndex?: number;
       visitedSongs?: string[];
+      stage?: ExperienceStage;
     };
 
     if (
@@ -1689,6 +1801,13 @@ useEffect(() => {
 
     if (Array.isArray(parsedProgress.visitedSongs)) {
       setVisitedSongs(parsedProgress.visitedSongs);
+    }
+
+    if (
+      parsedProgress.stage &&
+      experienceStages.includes(parsedProgress.stage)
+    ) {
+      setSavedStage(parsedProgress.stage);
     }
   } catch (error) {
     console.error("No se pudo cargar el progreso:", error);
@@ -1715,9 +1834,19 @@ useEffect(() => {
 }, [showSongs, currentSongIndex]);
 
 useEffect(() => {
-  if (!hasLoadedProgress || !showSongs) {
+  if (!hasLoadedProgress || !hasEntered) {
     return;
   }
+
+  const stage: ExperienceStage = showFinal
+    ? "final"
+    : showFinalPrelude
+      ? "prelude"
+      : showSongs
+        ? "songs"
+        : showHeart
+          ? "heart"
+          : "intro";
 
   try {
     localStorage.setItem(
@@ -1725,22 +1854,34 @@ useEffect(() => {
       JSON.stringify({
         songIndex: currentSongIndex,
         visitedSongs,
+        stage,
       })
     );
 
     setSavedSongIndex(currentSongIndex);
+    setSavedStage(stage);
   } catch (error) {
     console.error("No se pudo guardar el progreso:", error);
   }
 }, [
   currentSongIndex,
   visitedSongs,
+  hasEntered,
+  showHeart,
   showSongs,
+  showFinalPrelude,
+  showFinal,
   hasLoadedProgress,
 ]);
 
 useEffect(() => {
-  if (!hasEntered || showSongIndex) {
+  if (
+    isInitialLoading ||
+    !hasEntered ||
+    showSongIndex ||
+    showSecretNote ||
+    showRestartConfirmation
+  ) {
     document.body.style.overflow = "hidden";
   } else {
     document.body.style.overflow = "";
@@ -1749,7 +1890,99 @@ useEffect(() => {
   return () => {
     document.body.style.overflow = "";
   };
-}, [hasEntered, showSongIndex]);
+}, [
+  isInitialLoading,
+  hasEntered,
+  showSongIndex,
+  showSecretNote,
+  showRestartConfirmation,
+]);
+
+
+useEffect(() => {
+  try {
+    const savedPreferences = localStorage.getItem(
+      audioPreferencesStorageKey
+    );
+
+    if (savedPreferences) {
+      const parsedPreferences = JSON.parse(savedPreferences) as {
+        volume?: number;
+        muted?: boolean;
+      };
+
+      if (
+        typeof parsedPreferences.volume === "number" &&
+        parsedPreferences.volume >= 0 &&
+        parsedPreferences.volume <= 1
+      ) {
+        setAudioVolume(parsedPreferences.volume);
+      }
+
+      if (typeof parsedPreferences.muted === "boolean") {
+        setIsAudioMuted(parsedPreferences.muted);
+      }
+    }
+  } catch (error) {
+    console.error(
+      "No se pudieron cargar las preferencias de audio:",
+      error
+    );
+
+    localStorage.removeItem(audioPreferencesStorageKey);
+  } finally {
+    setHasLoadedAudioPreferences(true);
+  }
+}, []);
+
+useEffect(() => {
+  const audio = audioRef.current;
+
+  if (audio) {
+    audio.volume = audioVolume;
+    audio.muted = isAudioMuted;
+  }
+
+  if (!hasLoadedAudioPreferences) {
+    return;
+  }
+
+  try {
+    localStorage.setItem(
+      audioPreferencesStorageKey,
+      JSON.stringify({
+        volume: audioVolume,
+        muted: isAudioMuted,
+      })
+    );
+  } catch (error) {
+    console.error(
+      "No se pudieron guardar las preferencias de audio:",
+      error
+    );
+  }
+}, [audioVolume, isAudioMuted, hasLoadedAudioPreferences]);
+
+useEffect(() => {
+  if (!showSecretNote && !showRestartConfirmation) {
+    return;
+  }
+
+  const closeModalWithEscape = (event: KeyboardEvent) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    setShowSecretNote(false);
+    setShowRestartConfirmation(false);
+  };
+
+  window.addEventListener("keydown", closeModalWithEscape);
+
+  return () => {
+    window.removeEventListener("keydown", closeModalWithEscape);
+  };
+}, [showSecretNote, showRestartConfirmation]);
 
 useEffect(() => {
   try {
@@ -1824,23 +2057,69 @@ function continueExperience() {
     return;
   }
 
-  void playSongSnippet(savedSongIndex);
   setHasEntered(true);
-  setShowHeart(true);
-  setShowSongs(true);
-  setShowFinal(false);
-  setShowFinalPrelude(false);
   setShowSongIndex(false);
   setShowOnlyFavorites(false);
   setNavigationDirection(1);
   setCurrentSongIndex(savedSongIndex);
 
-  setTimeout(() => {
-    document.getElementById("canciones")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 250);
+  if (savedStage === "final") {
+    setShowHeart(true);
+    setShowSongs(true);
+    setShowFinalPrelude(false);
+    setShowFinal(true);
+    pauseSnippet();
+
+    window.setTimeout(() => {
+      document.getElementById("final")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 250);
+
+    return;
+  }
+
+  if (savedStage === "prelude") {
+    setShowHeart(true);
+    setShowSongs(true);
+    setShowFinal(false);
+    setShowFinalPrelude(true);
+    pauseSnippet();
+    return;
+  }
+
+  if (savedStage === "songs") {
+    setShowHeart(true);
+    setShowSongs(true);
+    setShowFinal(false);
+    setShowFinalPrelude(false);
+    void playSongSnippet(savedSongIndex);
+
+    window.setTimeout(() => {
+      document.getElementById("canciones")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 250);
+
+    return;
+  }
+
+  if (savedStage === "heart") {
+    setShowHeart(true);
+    setShowSongs(false);
+    setShowFinal(false);
+    setShowFinalPrelude(false);
+    pauseSnippet();
+    return;
+  }
+
+  setShowHeart(false);
+  setShowSongs(false);
+  setShowFinal(false);
+  setShowFinalPrelude(false);
+  pauseSnippet();
 }
 
 
@@ -2170,7 +2449,26 @@ function returnToLastSong() {
   }, 100);
 }
 
+function handleSecretTap() {
+  setSecretTapCount((currentCount) => {
+    const nextCount = currentCount + 1;
+
+    if (nextCount >= 5) {
+      setShowSecretNote(true);
+      return 0;
+    }
+
+    return nextCount;
+  });
+}
+
 function restartExperience() {
+  setShowRestartConfirmation(true);
+}
+
+function confirmRestartExperience() {
+  setShowRestartConfirmation(false);
+  setShowSecretNote(false);
   setHasEntered(false);
   setShowFinal(false);
   setShowFinalPrelude(false);
@@ -2183,6 +2481,7 @@ function restartExperience() {
   setShowOnlyFavorites(false);
   localStorage.removeItem(progressStorageKey);
   setSavedSongIndex(null);
+  setSavedStage("intro");
   setVisitedSongs([]);
 
   pauseSnippet();
@@ -2195,6 +2494,57 @@ function restartExperience() {
 
   return (
     <main>
+      <AnimatePresence>
+        {isInitialLoading && (
+          <motion.section
+            className="initialLoadingScreen"
+            role="status"
+            aria-live="polite"
+            aria-label="Preparando la experiencia"
+            initial={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              scale: 1.025,
+              filter: "blur(8px)",
+            }}
+            transition={{ duration: 0.65, ease: "easeInOut" }}
+          >
+            <div className="initialLoadingGlow" />
+
+            <motion.div
+              className="initialLoadingFlower"
+              animate={{
+                rotate: [0, 12, -12, 0],
+                scale: [0.94, 1.08, 0.94],
+              }}
+              transition={{
+                duration: 2.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              aria-hidden="true"
+            >
+              ✿
+            </motion.div>
+
+            <p>Preparando algo especial para ti…</p>
+
+            <div
+              className="initialLoadingTrack"
+              aria-label={`Carga ${initialLoadProgress}%`}
+            >
+              <motion.div
+                className="initialLoadingFill"
+                animate={{ width: `${initialLoadProgress}%` }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              />
+            </div>
+
+            <span>{initialLoadProgress}%</span>
+          </motion.section>
+        )}
+      </AnimatePresence>
+
       <video
   ref={audioRef}
   preload="auto"
@@ -3314,13 +3664,17 @@ function restartExperience() {
             </motion.span>
           ))}
 
-          <motion.div
+          <motion.button
+            type="button"
             className="finalInitial"
+            onClick={handleSecretTap}
+            aria-label="Inicial de Regina"
             initial={{ opacity: 0, scale: 0 }}
             animate={{
               opacity: 1,
               scale: [1, 1.08, 1],
             }}
+            whileTap={{ scale: 0.92 }}
             transition={{
               opacity: {
                 delay: 1.3,
@@ -3334,7 +3688,7 @@ function restartExperience() {
             }}
           >
             R
-          </motion.div>
+          </motion.button>
         </div>
 
         <motion.h2
@@ -3492,6 +3846,117 @@ function restartExperience() {
   )}
 </AnimatePresence>
 
+      <AnimatePresence>
+        {showSecretNote && (
+          <motion.div
+            className="experienceModalBackdrop"
+            role="presentation"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowSecretNote(false);
+              }
+            }}
+          >
+            <motion.section
+              className="experienceModal secretNoteModal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="secret-note-title"
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.97 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            >
+              <span className="secretNoteFlower" aria-hidden="true">
+                ✿
+              </span>
+
+              <p className="experienceModalEyebrow">
+                Encontraste el mensaje secreto
+              </p>
+
+              <h3 id="secret-note-title">Gracias por llegar hasta aquí</h3>
+
+              <p>
+                Que hayas escuchado las canciones, leído cada palabra y
+                descubierto este pequeño secreto significa más para mí de
+                lo que imaginas.
+              </p>
+
+              <button
+                type="button"
+                className="experienceModalPrimaryButton"
+                onClick={() => setShowSecretNote(false)}
+              >
+                Guardar este secreto
+              </button>
+            </motion.section>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showRestartConfirmation && (
+          <motion.div
+            className="experienceModalBackdrop"
+            role="presentation"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowRestartConfirmation(false);
+              }
+            }}
+          >
+            <motion.section
+              className="experienceModal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="restart-title"
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.97 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <p className="experienceModalEyebrow">
+                Antes de volver
+              </p>
+
+              <h3 id="restart-title">
+                ¿Quieres comenzar toda la experiencia de nuevo?
+              </h3>
+
+              <p>
+                Se borrará la canción guardada y regresarás a la pantalla
+                inicial. Tus canciones favoritas se conservarán.
+              </p>
+
+              <div className="experienceModalActions">
+                <button
+                  type="button"
+                  className="experienceModalSecondaryButton"
+                  onClick={() => setShowRestartConfirmation(false)}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="experienceModalPrimaryButton"
+                  onClick={confirmRestartExperience}
+                >
+                  Sí, volver al inicio
+                </button>
+              </div>
+            </motion.section>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div
         className={
           showSongs && !showFinal && !showFinalPrelude
@@ -3590,6 +4055,44 @@ function restartExperience() {
             }}
             transition={{ duration: 0.15, ease: "linear" }}
           />
+        </div>
+
+        <div className="spotifyVolumeRow">
+          <button
+            type="button"
+            className="spotifyMuteButton"
+            onClick={() => setIsAudioMuted((currentMuted) => !currentMuted)}
+            aria-label={isAudioMuted ? "Activar sonido" : "Silenciar audio"}
+          >
+            {isAudioMuted || audioVolume === 0
+              ? "🔇"
+              : audioVolume < 0.5
+                ? "🔉"
+                : "🔊"}
+          </button>
+
+          <input
+            className="spotifyVolumeSlider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={isAudioMuted ? 0 : audioVolume}
+            onChange={(event) => {
+              const nextVolume = Number(event.currentTarget.value);
+
+              setAudioVolume(nextVolume);
+
+              if (nextVolume > 0) {
+                setIsAudioMuted(false);
+              }
+            }}
+            aria-label="Volumen del reproductor"
+          />
+
+          <span>
+            {isAudioMuted ? 0 : Math.round(audioVolume * 100)}%
+          </span>
         </div>
 
         <div className="spotifyPlayerFooter">

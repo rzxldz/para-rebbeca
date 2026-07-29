@@ -2324,3 +2324,302 @@ h1 span {
     transition: none;
   }
 }
+
+/* ================================================================
+   EXPERIENCIA FINAL: CARGA, MODALES, VOLUMEN Y AJUSTES MÓVILES
+   ================================================================ */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.initialLoadingScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  min-height: 100svh;
+  padding: 24px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  overflow: hidden;
+  color: #f8eee8;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(143, 57, 86, 0.55),
+      transparent 36%
+    ),
+    linear-gradient(155deg, #251218 0%, #150c10 58%, #090607 100%);
+}
+
+.initialLoadingScreen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.9) 1px,
+    transparent 1px
+  );
+  background-size: 34px 34px;
+}
+
+.initialLoadingGlow {
+  position: absolute;
+  width: min(520px, 100vw);
+  height: min(520px, 100vw);
+  border-radius: 50%;
+  background: rgba(221, 160, 174, 0.18);
+  filter: blur(100px);
+}
+
+.initialLoadingFlower,
+.initialLoadingScreen p,
+.initialLoadingTrack,
+.initialLoadingScreen > span {
+  position: relative;
+  z-index: 1;
+}
+
+.initialLoadingFlower {
+  color: #f0c2cd;
+  font-size: clamp(4.5rem, 17vw, 7.5rem);
+  text-shadow:
+    0 0 22px rgba(240, 194, 205, 0.48),
+    0 0 70px rgba(240, 194, 205, 0.2);
+}
+
+.initialLoadingScreen p {
+  margin-top: 20px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.1rem, 4vw, 1.45rem);
+}
+
+.initialLoadingTrack {
+  width: min(330px, 78vw);
+  height: 6px;
+  margin-top: 25px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(248, 238, 232, 0.12);
+}
+
+.initialLoadingFill {
+  width: 8%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #dda0ae, #f8eee8);
+  box-shadow: 0 0 20px rgba(221, 160, 174, 0.48);
+}
+
+.initialLoadingScreen > span {
+  margin-top: 11px;
+  color: rgba(248, 238, 232, 0.62);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.finalInitial {
+  border: 1px solid rgba(248, 238, 232, 0.25);
+  cursor: pointer;
+}
+
+.finalInitial:focus-visible {
+  outline: 3px solid rgba(244, 214, 221, 0.72);
+  outline-offset: 5px;
+}
+
+.experienceModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 6, 8, 0.76);
+  backdrop-filter: blur(15px);
+}
+
+.experienceModal {
+  width: min(500px, 100%);
+  max-height: calc(100svh - 40px);
+  padding: clamp(28px, 6vw, 44px);
+  overflow-y: auto;
+  border: 1px solid rgba(248, 238, 232, 0.16);
+  border-radius: 30px;
+  color: #f8eee8;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(135, 58, 82, 0.3),
+      transparent 48%
+    ),
+    rgba(27, 15, 20, 0.98);
+  box-shadow:
+    0 35px 100px rgba(0, 0, 0, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.experienceModalEyebrow {
+  color: #dda0ae;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.experienceModal h3 {
+  margin-top: 14px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 7vw, 2.65rem);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.experienceModal > p:not(.experienceModalEyebrow) {
+  margin-top: 20px;
+  color: rgba(248, 238, 232, 0.72);
+  line-height: 1.75;
+}
+
+.secretNoteFlower {
+  display: block;
+  margin-bottom: 18px;
+  color: #f0c2cd;
+  font-size: 3.5rem;
+  text-shadow: 0 0 28px rgba(240, 194, 205, 0.45);
+}
+
+.experienceModalActions {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.experienceModalPrimaryButton,
+.experienceModalSecondaryButton {
+  min-height: 50px;
+  padding: 13px 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.experienceModalPrimaryButton {
+  margin-top: 28px;
+  border: 1px solid #f4d6dd;
+  background: #f4d6dd;
+  color: #2b151d;
+}
+
+.experienceModalActions .experienceModalPrimaryButton {
+  margin-top: 0;
+}
+
+.experienceModalSecondaryButton {
+  border: 1px solid rgba(248, 238, 232, 0.24);
+  background: rgba(255, 255, 255, 0.055);
+  color: #f8eee8;
+}
+
+.experienceModalPrimaryButton:hover,
+.experienceModalSecondaryButton:hover {
+  transform: translateY(-2px);
+}
+
+.spotifyVolumeRow {
+  margin: 2px 0 10px;
+  display: grid;
+  grid-template-columns: 34px minmax(80px, 1fr) 42px;
+  align-items: center;
+  gap: 9px;
+}
+
+.spotifyMuteButton {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.spotifyVolumeSlider {
+  width: 100%;
+  height: 4px;
+  accent-color: #f4d6dd;
+  cursor: pointer;
+}
+
+.spotifyVolumeRow > span {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.67rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@media (max-width: 650px) {
+  .experienceModalActions {
+    flex-direction: column-reverse;
+  }
+
+  .experienceModalPrimaryButton,
+  .experienceModalSecondaryButton {
+    width: 100%;
+  }
+
+  .spotifyFloatingPlayer {
+    right: 12px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    width: calc(100% - 24px) !important;
+  }
+
+  .spotifyVolumeRow {
+    grid-template-columns: 36px minmax(70px, 1fr) 38px;
+  }
+
+  .spotifyMuteButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .welcomeButton,
+  .continueExperienceButton,
+  .continueButton,
+  .navigationButton,
+  .finalPrimaryButton,
+  .finalSecondaryButton,
+  .finalTextButton {
+    min-height: 48px;
+  }
+
+  .finalSection {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .initialLoadingFlower {
+    animation: none;
+  }
+}

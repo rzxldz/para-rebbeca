@@ -1,25 +1,55 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const productionUrl =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ??
+  process.env.VERCEL_URL ??
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "http://localhost:3000";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const metadataBase = new URL(
+  productionUrl.startsWith("http")
+    ? productionUrl
+    : `https://${productionUrl}`
+);
 
 export const metadata: Metadata = {
+  metadataBase,
   title: "Para Regina",
-  description:
-    "Hay cosas que no sé decirte, así que dejé que algunas canciones lo hicieran por mí.",
+  description: "40 canciones y algo que quería decirte.",
+  applicationName: "Para Regina",
+  openGraph: {
+    type: "website",
+    locale: "es_MX",
+    title: "Para Regina",
+    description: "40 canciones y algo que quería decirte.",
+    siteName: "Para Regina",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Para Regina: 40 canciones y algo que quería decirte",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Para Regina",
+    description: "40 canciones y algo que quería decirte.",
+    images: ["/opengraph-image"],
+  },
   robots: {
     index: false,
     follow: false,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#170f12",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -28,11 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="es">
+      <body>{children}</body>
     </html>
   );
 }
