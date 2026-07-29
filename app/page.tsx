@@ -1254,6 +1254,137 @@ const songVariants = {
   }),
 };
 
+const snoopyFlowers = [
+  { id: 1, symbol: "✿", left: "5%", top: "68%", delay: 0 },
+  { id: 2, symbol: "❀", left: "14%", top: "76%", delay: 0.3 },
+  { id: 3, symbol: "✿", left: "25%", top: "70%", delay: 0.6 },
+  { id: 4, symbol: "❀", left: "38%", top: "79%", delay: 0.2 },
+  { id: 5, symbol: "✿", left: "52%", top: "73%", delay: 0.8 },
+  { id: 6, symbol: "❀", left: "66%", top: "80%", delay: 0.4 },
+  { id: 7, symbol: "✿", left: "78%", top: "72%", delay: 0.7 },
+  { id: 8, symbol: "❀", left: "89%", top: "78%", delay: 0.1 },
+];
+
+function SnoopyWithFlowers() {
+  return (
+    <motion.div
+      className="snoopyFlowerScene"
+      initial={{
+        opacity: 0,
+        y: 30,
+      }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.4,
+      }}
+      transition={{
+        duration: 0.9,
+        ease: "easeOut",
+      }}
+      aria-label="Snoopy sosteniendo un ramo de flores"
+    >
+      {snoopyFlowers.map((flower) => (
+        <span
+          key={flower.id}
+          className="snoopyGroundFlower"
+          style={{
+            left: flower.left,
+            top: flower.top,
+            animationDelay: `${flower.delay}s`,
+          }}
+          aria-hidden="true"
+        >
+          {flower.symbol}
+        </span>
+      ))}
+
+      <motion.div
+        className="snoopyCharacter"
+        animate={{
+          y: [0, -5, 0],
+          rotate: [0, -1, 0, 1, 0],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <div className="snoopyTail" />
+
+        <div className="snoopyBody">
+          <div className="snoopyCollar" />
+        </div>
+
+        <div className="snoopyEar" />
+
+        <div className="snoopyHead">
+          <div className="snoopyEye" />
+          <div className="snoopyEyebrow" />
+        </div>
+
+        <div className="snoopySnout">
+          <div className="snoopyNose" />
+          <div className="snoopySmile" />
+        </div>
+
+        <div className="snoopyArm snoopyArmLeft" />
+        <div className="snoopyArm snoopyArmRight" />
+
+        <div className="snoopyFoot snoopyFootLeft" />
+        <div className="snoopyFoot snoopyFootRight" />
+      </motion.div>
+
+      <motion.div
+        className="snoopyBouquet"
+        animate={{
+          rotate: [-2, 2, -2],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        aria-hidden="true"
+      >
+        <span className="bouquetFlower bouquetFlowerOne">🌸</span>
+        <span className="bouquetFlower bouquetFlowerTwo">🌼</span>
+        <span className="bouquetFlower bouquetFlowerThree">🌷</span>
+        <span className="bouquetFlower bouquetFlowerFour">🌸</span>
+        <span className="bouquetStem bouquetStemOne" />
+        <span className="bouquetStem bouquetStemTwo" />
+        <span className="bouquetStem bouquetStemThree" />
+        <span className="bouquetRibbon">♥</span>
+      </motion.div>
+
+      <motion.span
+        className="snoopyFloatingHeart"
+        aria-hidden="true"
+        animate={{
+          y: [0, -12, 0],
+          scale: [1, 1.15, 1],
+          opacity: [0.65, 1, 0.65],
+        }}
+        transition={{
+          duration: 2.8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        ♥
+      </motion.span>
+
+      <p className="snoopyFlowerCaption">
+        Para ti, con mucho cariño
+      </p>
+    </motion.div>
+  );
+}
+
 export default function Home() {
   const [hasEntered, setHasEntered] = useState(false);
   const [showHeart, setShowHeart] = useState(false);
@@ -2808,12 +2939,15 @@ function restartExperience() {
           <span className="finalSignature">Con cariño, Emmanuel Roldan</span>
         </motion.div>
 
+                <SnoopyWithFlowers />
+
         <motion.div
           className="finalActions"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
         >
+
 <a
   className="finalPrimaryButton playlistButton"
   href={playlistUrl}

@@ -2000,3 +2000,376 @@ h1 span {
     max-width: 230px;
   }
 }
+
+.snoopyFlowerScene {
+  position: relative;
+  width: min(100%, 390px);
+  height: 310px;
+  margin: 38px auto 28px;
+  overflow: hidden;
+
+  border-radius: 34px;
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      rgba(255, 255, 255, 0.96),
+      rgba(255, 238, 242, 0.75) 58%,
+      rgba(243, 208, 218, 0.62)
+    );
+
+  box-shadow:
+    0 20px 55px rgba(107, 58, 74, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.snoopyCharacter {
+  position: absolute;
+  left: 54px;
+  top: 32px;
+  width: 235px;
+  height: 220px;
+  transform-origin: center bottom;
+  z-index: 4;
+}
+
+/* Cabeza */
+
+.snoopyHead {
+  position: absolute;
+  left: 76px;
+  top: 3px;
+  width: 105px;
+  height: 82px;
+
+  background: #ffffff;
+  border: 3px solid #151515;
+  border-radius: 58% 54% 50% 48%;
+  transform: rotate(-5deg);
+  z-index: 6;
+}
+
+.snoopyEar {
+  position: absolute;
+  left: 48px;
+  top: 23px;
+  width: 42px;
+  height: 86px;
+
+  background: #151515;
+  border-radius: 48% 52% 55% 45%;
+  transform: rotate(10deg);
+  z-index: 7;
+}
+
+.snoopyEye {
+  position: absolute;
+  right: 18px;
+  top: 25px;
+  width: 7px;
+  height: 12px;
+
+  background: #151515;
+  border-radius: 999px;
+  transform: rotate(-8deg);
+}
+
+.snoopyEyebrow {
+  position: absolute;
+  right: 12px;
+  top: 14px;
+  width: 19px;
+  height: 9px;
+
+  border-top: 2px solid #151515;
+  border-radius: 50%;
+  transform: rotate(10deg);
+}
+
+/* Hocico */
+
+.snoopySnout {
+  position: absolute;
+  left: 143px;
+  top: 37px;
+  width: 72px;
+  height: 46px;
+
+  background: #ffffff;
+  border: 3px solid #151515;
+  border-left: 0;
+  border-radius: 25% 70% 70% 40%;
+  transform: rotate(2deg);
+  z-index: 8;
+}
+
+.snoopyNose {
+  position: absolute;
+  right: -7px;
+  top: 4px;
+  width: 22px;
+  height: 17px;
+
+  background: #151515;
+  border-radius: 55% 45% 55% 50%;
+  transform: rotate(4deg);
+}
+
+.snoopySmile {
+  position: absolute;
+  right: 21px;
+  bottom: 8px;
+  width: 24px;
+  height: 13px;
+
+  border-bottom: 2px solid #151515;
+  border-radius: 50%;
+  transform: rotate(-7deg);
+}
+
+/* Cuerpo */
+
+.snoopyBody {
+  position: absolute;
+  left: 73px;
+  top: 79px;
+  width: 91px;
+  height: 119px;
+
+  background: #ffffff;
+  border: 3px solid #151515;
+  border-radius: 50% 45% 43% 48%;
+  transform: rotate(-2deg);
+  z-index: 3;
+}
+
+.snoopyCollar {
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 78px;
+  height: 12px;
+
+  background: #d43d53;
+  border: 2px solid #151515;
+  border-radius: 999px;
+  transform: rotate(-2deg);
+}
+
+.snoopyTail {
+  position: absolute;
+  left: 39px;
+  top: 115px;
+  width: 52px;
+  height: 25px;
+
+  background: #ffffff;
+  border: 3px solid #151515;
+  border-radius: 70% 20% 60% 35%;
+  transform: rotate(-27deg);
+  z-index: 2;
+}
+
+/* Brazos */
+
+.snoopyArm {
+  position: absolute;
+  height: 22px;
+
+  background: #ffffff;
+  border: 3px solid #151515;
+  border-radius: 999px;
+  z-index: 5;
+}
+
+.snoopyArmLeft {
+  left: 45px;
+  top: 121px;
+  width: 69px;
+  transform: rotate(-24deg);
+}
+
+.snoopyArmRight {
+  left: 133px;
+  top: 119px;
+  width: 75px;
+  transform: rotate(17deg);
+}
+
+/* Pies */
+
+.snoopyFoot {
+  position: absolute;
+  top: 183px;
+  width: 78px;
+  height: 34px;
+
+  background: #ffffff;
+  border: 3px solid #151515;
+  border-radius: 65% 55% 50% 45%;
+  z-index: 5;
+}
+
+.snoopyFootLeft {
+  left: 40px;
+  transform: rotate(-6deg);
+}
+
+.snoopyFootRight {
+  left: 107px;
+  transform: rotate(8deg);
+}
+
+/* Ramo */
+
+.snoopyBouquet {
+  position: absolute;
+  right: 27px;
+  top: 93px;
+  width: 115px;
+  height: 140px;
+
+  transform-origin: center bottom;
+  z-index: 8;
+}
+
+.bouquetFlower {
+  position: absolute;
+  font-size: 38px;
+  filter: drop-shadow(0 6px 8px rgba(92, 48, 63, 0.16));
+  z-index: 4;
+}
+
+.bouquetFlowerOne {
+  left: 6px;
+  top: 17px;
+}
+
+.bouquetFlowerTwo {
+  left: 37px;
+  top: 0;
+}
+
+.bouquetFlowerThree {
+  left: 66px;
+  top: 20px;
+}
+
+.bouquetFlowerFour {
+  left: 35px;
+  top: 36px;
+}
+
+.bouquetStem {
+  position: absolute;
+  top: 65px;
+  width: 4px;
+  height: 67px;
+
+  background: #478c5d;
+  border-radius: 999px;
+  transform-origin: top;
+  z-index: 1;
+}
+
+.bouquetStemOne {
+  left: 34px;
+  transform: rotate(-13deg);
+}
+
+.bouquetStemTwo {
+  left: 55px;
+  transform: rotate(2deg);
+}
+
+.bouquetStemThree {
+  left: 74px;
+  transform: rotate(14deg);
+}
+
+.bouquetRibbon {
+  position: absolute;
+  left: 41px;
+  top: 92px;
+
+  color: #d43d53;
+  font-size: 27px;
+  z-index: 5;
+}
+
+/* Flores inferiores */
+
+.snoopyGroundFlower {
+  position: absolute;
+  color: #c94f70;
+  font-size: 28px;
+  line-height: 1;
+  z-index: 2;
+
+  animation: snoopyFlowerMovement 2.8s ease-in-out infinite;
+}
+
+.snoopyGroundFlower:nth-of-type(even) {
+  color: #e4a334;
+}
+
+@keyframes snoopyFlowerMovement {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(5deg);
+  }
+}
+
+.snoopyFloatingHeart {
+  position: absolute;
+  right: 35px;
+  top: 41px;
+
+  color: #d43d53;
+  font-size: 27px;
+  z-index: 9;
+}
+
+.snoopyFlowerCaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 13px;
+
+  margin: 0;
+  color: #7a4052;
+
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
+/* Celular */
+
+@media (max-width: 520px) {
+  .snoopyFlowerScene {
+    height: 280px;
+  }
+
+  .snoopyCharacter {
+    left: 24px;
+    top: 25px;
+    transform: scale(0.88);
+    transform-origin: left top;
+  }
+
+  .snoopyBouquet {
+    right: 11px;
+    top: 84px;
+    transform: scale(0.87);
+    transform-origin: right top;
+  }
+
+  .snoopyFlowerCaption {
+    font-size: 14px;
+  }
+}
