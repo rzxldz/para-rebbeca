@@ -1725,6 +1725,9 @@ export default function Home() {
   const songCarouselItemRefs =
     useRef<Array<HTMLButtonElement | null>>([]);
   const activeSongCardRef = useRef<HTMLElement | null>(null);
+  const pendingLyricsAutoScrollRef = useRef(false);
+  const lyricsAutoScrollTimeoutRef =
+    useRef<number | null>(null);
   const [songCardReadingProgress, setSongCardReadingProgress] =
     useState(0);
 
@@ -1749,6 +1752,16 @@ export default function Home() {
   */
   const spotifyReady = true;
 
+
+useEffect(() => {
+  return () => {
+    if (lyricsAutoScrollTimeoutRef.current !== null) {
+      window.clearTimeout(
+        lyricsAutoScrollTimeoutRef.current
+      );
+    }
+  };
+}, []);
 
 useEffect(() => {
   let isActive = true;
@@ -2509,6 +2522,57 @@ async function restartSnippet() {
   }
 }
 
+function prepareLyricsAutoScroll() {
+  pendingLyricsAutoScrollRef.current = true;
+
+  if (lyricsAutoScrollTimeoutRef.current !== null) {
+    window.clearTimeout(
+      lyricsAutoScrollTimeoutRef.current
+    );
+
+    lyricsAutoScrollTimeoutRef.current = null;
+  }
+}
+
+function handleCurrentCoverLoaded() {
+  if (!pendingLyricsAutoScrollRef.current) {
+    return;
+  }
+
+  pendingLyricsAutoScrollRef.current = false;
+
+  /*
+    La portada ya cargó. Esta pausa breve permite que termine
+    su animación antes de acompañar a Regina hacia la letra.
+  */
+  lyricsAutoScrollTimeoutRef.current = window.setTimeout(() => {
+    window.requestAnimationFrame(() => {
+      const lyricsBlock = document.querySelector<HTMLElement>(
+        ".songCard .lyrics"
+      );
+
+      if (!lyricsBlock) {
+        return;
+      }
+
+      const fixedHeaderOffset =
+        window.innerWidth <= 650 ? 86 : 106;
+
+      const targetPosition =
+        window.scrollY +
+        lyricsBlock.getBoundingClientRect().top -
+        fixedHeaderOffset;
+
+      window.scrollTo({
+        top: Math.max(0, targetPosition),
+        behavior: "smooth",
+      });
+
+      lyricsAutoScrollTimeoutRef.current = null;
+    });
+  }, 900);
+}
+
 function scrollToCurrentSongCover(delay = 160) {
   window.setTimeout(() => {
     window.requestAnimationFrame(() => {
@@ -2543,6 +2607,7 @@ function previousSong() {
 
   const targetIndex = currentSongIndex - 1;
 
+  prepareLyricsAutoScroll();
   setNavigationDirection(-1);
   setShowFinal(false);
   setShowFinalPrelude(false);
@@ -2571,6 +2636,7 @@ function nextSong() {
 
   const targetIndex = currentSongIndex + 1;
 
+  prepareLyricsAutoScroll();
   setNavigationDirection(1);
   setShowFinal(false);
   setShowFinalPrelude(false);
@@ -2582,6 +2648,12 @@ function nextSong() {
 
 
 function openSongFromIndex(songIndex: number) {
+  if (songIndex === currentSongIndex) {
+    return;
+  }
+
+  prepareLyricsAutoScroll();
+
   if (songIndex > currentSongIndex) {
     setNavigationDirection(1);
   } else if (songIndex < currentSongIndex) {
@@ -3272,6 +3344,7 @@ function confirmRestartExperience() {
               fill
               sizes="(max-width: 800px) 100vw, 45vw"
               priority
+              onLoad={handleCurrentCoverLoaded}
             />
             </motion.div>
 
