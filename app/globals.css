@@ -3439,3 +3439,10 @@ input {
     font-size: clamp(2.7rem, 14vw, 4.2rem);
   }
 }
+
+/* Mantiene estable el inicio de la carta mientras se forma el corazón. */
+.finalSection,
+.finalContent,
+.finalHeart {
+  overflow-anchor: none;
+}

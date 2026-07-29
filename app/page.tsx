@@ -2691,14 +2691,40 @@ function handleSongDragEnd(
 
 function openFinalLetter() {
   setShowFinalPrelude(false);
-  setShowFinal(true);
+  setShowFinal(false);
 
-  setTimeout(() => {
-    document.getElementById("final")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
+  /*
+    Esperamos a que termine de salir la pantalla anterior.
+    Así, al montar la carta, su posición ya no cambia y el
+    teléfono permanece viendo el corazón desde el comienzo.
+  */
+  window.setTimeout(() => {
+    setShowFinal(true);
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const finalSection =
+          document.getElementById("final");
+
+        if (!finalSection) {
+          return;
+        }
+
+        const fixedHeaderOffset =
+          window.innerWidth <= 650 ? 72 : 92;
+
+        const targetPosition =
+          window.scrollY +
+          finalSection.getBoundingClientRect().top -
+          fixedHeaderOffset;
+
+        window.scrollTo({
+          top: Math.max(0, targetPosition),
+          behavior: "auto",
+        });
+      });
     });
-  }, 120);
+  }, 850);
 }
 
 function returnToLastSong() {
