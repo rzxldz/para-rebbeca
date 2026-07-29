@@ -3404,3 +3404,38 @@ input {
     transition: none;
   }
 }
+
+/* ================================================================
+   CARTA FINAL: INICIO CORRECTO EN CELULAR
+   Evita que el centrado vertical coloque el corazón y el título
+   por encima de la pantalla cuando la carta es más alta que el móvil.
+   ================================================================ */
+
+@media (max-width: 650px) {
+  .finalSection {
+    min-height: 100svh;
+    padding-top: calc(
+      88px + env(safe-area-inset-top)
+    );
+    display: block;
+  }
+
+  .finalContent {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .finalEyebrow {
+    margin-top: 0;
+  }
+
+  .finalHeart {
+    width: min(250px, 72vw);
+    height: min(230px, 66vw);
+  }
+
+  .finalContent h2 {
+    margin-top: 0;
+    font-size: clamp(2.7rem, 14vw, 4.2rem);
+  }
+}
