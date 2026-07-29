@@ -2570,7 +2570,7 @@ function handleCurrentCoverLoaded() {
 
       lyricsAutoScrollTimeoutRef.current = null;
     });
-  }, 900);
+  }, 1600);
 }
 
 function scrollToCurrentSongCover(delay = 160) {
