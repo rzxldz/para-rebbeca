@@ -1919,3 +1919,10 @@ h1 span {
     margin: 30px auto;
   }
 }
+
+.playlistButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
