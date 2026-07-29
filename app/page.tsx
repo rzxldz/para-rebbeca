@@ -1232,6 +1232,22 @@ const finalPetals = Array.from({ length: 32 }, (_, index) => ({
   movement: index % 2 === 0 ? 80 : -80,
 }));
 
+const playerStars = Array.from({ length: 12 }, (_, index) => ({
+  id: index,
+  left: `${8 + ((index * 29) % 84)}%`,
+  top: `${10 + ((index * 41) % 78)}%`,
+  delay: (index % 6) * 0.18,
+  size: 7 + (index % 4) * 3,
+}));
+
+const preludeStars = Array.from({ length: 24 }, (_, index) => ({
+  id: index,
+  left: `${4 + ((index * 37) % 92)}%`,
+  top: `${5 + ((index * 53) % 88)}%`,
+  delay: (index % 8) * 0.2,
+  size: 5 + (index % 4) * 3,
+}));
+
 const progressStorageKey = "para-regina-progress";
 const favoritesStorageKey = "para-regina-favorites";
 
@@ -1383,39 +1399,29 @@ const snoopyBouquetPaths = [
 
 function SnoopyWithFlowers() {
   const snoopyRef = useRef<HTMLDivElement>(null);
-
   const snoopyIsVisible = useInView(snoopyRef, {
-  once: true,
-  amount: 0.85,
-  margin: "0px 0px -5% 0px",
-});
+    once: true,
+    amount: 0.85,
+    margin: "0px 0px -5% 0px",
+  });
 
   return (
     <motion.div
-  ref={snoopyRef}
-  className="snoopyFinalScene"
-  initial={{
-    opacity: 0,
-    scale: 0.96,
-  }}
-  animate={
-    snoopyIsVisible
-      ? {
-          opacity: 1,
-          scale: 1,
-        }
-      : {
-          opacity: 0,
-          scale: 0.96,
-        }
-  }
-  transition={{
-  duration: 0.55,
-  delay: snoopyIsVisible ? 0.35 : 0,
-  ease: "easeOut",
-}}
-  aria-label="Snoopy dibujado en relieve sosteniendo flores"
->
+      ref={snoopyRef}
+      className="snoopyFinalScene"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={
+        snoopyIsVisible
+          ? { opacity: 1, scale: 1 }
+          : { opacity: 0, scale: 0.96 }
+      }
+      transition={{
+        duration: 0.55,
+        delay: snoopyIsVisible ? 0.25 : 0,
+        ease: "easeOut",
+      }}
+      aria-label="Snoopy dibujado en relieve sosteniendo flores"
+    >
       <svg
         className="snoopyOutlineSvg"
         viewBox="55 20 285 250"
@@ -1424,10 +1430,14 @@ function SnoopyWithFlowers() {
       >
         <motion.g
           className="snoopyMovingOutline"
-          animate={{
-            y: [0, -4, 0],
-            rotate: [0, -0.7, 0, 0.7, 0],
-          }}
+          animate={
+            snoopyIsVisible
+              ? {
+                  y: [0, -4, 0],
+                  rotate: [0, -0.7, 0, 0.7, 0],
+                }
+              : { y: 0, rotate: 0 }
+          }
           transition={{
             duration: 4.8,
             delay: 3.2,
@@ -1450,16 +1460,10 @@ function SnoopyWithFlowers() {
                 opacity: 0,
               }}
               animate={
-  snoopyIsVisible
-    ? {
-        pathLength: 1,
-        opacity: 1,
-      }
-    : {
-        pathLength: 0,
-        opacity: 0,
-      }
-}
+                snoopyIsVisible
+                  ? { pathLength: 1, opacity: 1 }
+                  : { pathLength: 0, opacity: 0 }
+              }
               transition={{
                 pathLength: {
                   duration: 0.9,
@@ -1483,16 +1487,10 @@ function SnoopyWithFlowers() {
             transform="rotate(10 277 104)"
             initial={{ opacity: 0, scale: 0 }}
             animate={
-  snoopyIsVisible
-    ? {
-        opacity: 1,
-        scale: 1,
-      }
-    : {
-        opacity: 0,
-        scale: 0,
-      }
-}
+              snoopyIsVisible
+                ? { opacity: 1, scale: 1 }
+                : { opacity: 0, scale: 0 }
+            }
             transition={{
               delay: 1.58,
               duration: 0.35,
@@ -1508,16 +1506,10 @@ function SnoopyWithFlowers() {
             ry="6"
             initial={{ opacity: 0, scale: 0 }}
             animate={
-  snoopyIsVisible
-    ? {
-        opacity: 1,
-        scale: 1,
-      }
-    : {
-        opacity: 0,
-        scale: 0,
-      }
-}
+              snoopyIsVisible
+                ? { opacity: 1, scale: 1 }
+                : { opacity: 0, scale: 0 }
+            }
             transition={{
               delay: 1.65,
               duration: 0.3,
@@ -1527,9 +1519,11 @@ function SnoopyWithFlowers() {
 
           <motion.g
             className="snoopyOutlineBouquet"
-            animate={{
-              rotate: [-1.8, 2.2, -1.8],
-            }}
+            animate={
+              snoopyIsVisible
+                ? { rotate: [-1.8, 2.2, -1.8] }
+                : { rotate: 0 }
+            }
             transition={{
               duration: 3.2,
               delay: 3.25,
@@ -1551,17 +1545,10 @@ function SnoopyWithFlowers() {
                   pathLength: 0,
                   opacity: 0,
                 }}
-                animate={
-  snoopyIsVisible
-    ? {
-        pathLength: 1,
-        opacity: 1,
-      }
-    : {
-        pathLength: 0,
-        opacity: 0,
-      }
-}
+                animate={{
+                  pathLength: 1,
+                  opacity: 1,
+                }}
                 transition={{
                   pathLength: {
                     duration: 0.72,
@@ -1586,20 +1573,20 @@ function SnoopyWithFlowers() {
             opacity: 0,
           }}
           animate={
-  snoopyIsVisible
-    ? {
-        pathLength: 1,
-        opacity: 1,
-        scale: [1, 1.08, 1],
-        y: [0, -4, 0],
-      }
-    : {
-        pathLength: 0,
-        opacity: 0,
-        scale: 1,
-        y: 0,
-      }
-}
+            snoopyIsVisible
+              ? {
+                  pathLength: 1,
+                  opacity: 1,
+                  scale: [1, 1.08, 1],
+                  y: [0, -4, 0],
+                }
+              : {
+                  pathLength: 0,
+                  opacity: 0,
+                  scale: 1,
+                  y: 0,
+                }
+          }
           transition={{
             pathLength: {
               duration: 0.8,
@@ -1641,6 +1628,7 @@ export default function Home() {
   const [navigationDirection, setNavigationDirection] =
     useState<1 | -1>(1);
   const [showFinal, setShowFinal] = useState(false);
+  const [showFinalPrelude, setShowFinalPrelude] = useState(false);
   const [showSongIndex, setShowSongIndex] = useState(false);
 
   const [savedSongIndex, setSavedSongIndex] = useState<number | null>(null);
@@ -1841,6 +1829,7 @@ function continueExperience() {
   setShowHeart(true);
   setShowSongs(true);
   setShowFinal(false);
+  setShowFinalPrelude(false);
   setShowSongIndex(false);
   setShowOnlyFavorites(false);
   setNavigationDirection(1);
@@ -2033,6 +2022,33 @@ async function toggleSnippetPlayback() {
   }
 }
 
+async function restartSnippet() {
+  const audio = audioRef.current;
+
+  if (!audio) {
+    return;
+  }
+
+  if (loadedSongIndexRef.current !== currentSongIndex || !audio.src) {
+    await playSongSnippet(currentSongIndex);
+    return;
+  }
+
+  audio.currentTime = 0;
+  setSpotifyPositionSeconds(0);
+  setSpotifyHasReachedEnd(false);
+  setAudioError(null);
+
+  try {
+    await audio.play();
+  } catch (error) {
+    console.error("No se pudo reiniciar el fragmento:", error);
+    setSpotifyIsPlaying(false);
+    setSpotifyIsBuffering(false);
+    setAudioError("El navegador no permitió reiniciar el audio.");
+  }
+}
+
 function previousSong() {
   if (currentSongIndex === 0) {
     return;
@@ -2042,6 +2058,7 @@ function previousSong() {
 
   setNavigationDirection(-1);
   setShowFinal(false);
+  setShowFinalPrelude(false);
   void playSongSnippet(targetIndex);
   setCurrentSongIndex(targetIndex);
 
@@ -2057,10 +2074,11 @@ function previousSong() {
 function nextSong() {
   if (currentSongIndex === songs.length - 1) {
     pauseSnippet();
-    setShowFinal(true);
+    setShowFinal(false);
+    setShowFinalPrelude(true);
 
     setTimeout(() => {
-      document.getElementById("final")?.scrollIntoView({
+      document.getElementById("final-prelude")?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
@@ -2073,6 +2091,7 @@ function nextSong() {
 
   setNavigationDirection(1);
   setShowFinal(false);
+  setShowFinalPrelude(false);
   void playSongSnippet(targetIndex);
   setCurrentSongIndex(targetIndex);
 
@@ -2095,6 +2114,7 @@ void playSongSnippet(songIndex);
   setCurrentSongIndex(songIndex);
   setShowSongs(true);
   setShowFinal(false);
+  setShowFinalPrelude(false);
   setShowSongIndex(false);
   setShowOnlyFavorites(false);
 
@@ -2125,8 +2145,21 @@ function handleSongDragEnd(
   }
 }
 
+function openFinalLetter() {
+  setShowFinalPrelude(false);
+  setShowFinal(true);
+
+  setTimeout(() => {
+    document.getElementById("final")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 120);
+}
+
 function returnToLastSong() {
   setShowFinal(false);
+  setShowFinalPrelude(false);
   void playSongSnippet(currentSongIndex);
 
   setTimeout(() => {
@@ -2140,6 +2173,7 @@ function returnToLastSong() {
 function restartExperience() {
   setHasEntered(false);
   setShowFinal(false);
+  setShowFinalPrelude(false);
   setShowSongIndex(false);
   setShowSongs(false);
   setShowHeart(false);
@@ -2549,7 +2583,13 @@ function restartExperience() {
             scale: 0.985,
           }}
         >
-          <div className="songCover">
+          <div
+            className={
+              spotifyIsPlaying
+                ? "songCover songCoverPlaying"
+                : "songCover"
+            }
+          >
             <Image
               className="coverImage"
               src={currentSong.cover}
@@ -2560,6 +2600,43 @@ function restartExperience() {
             />
 
             <div className="coverOverlay" />
+
+            <div
+              className={
+                spotifyIsPlaying
+                  ? "songPlayingStars songPlayingStarsVisible"
+                  : "songPlayingStars"
+              }
+              aria-hidden="true"
+            >
+              {playerStars.map((star) => (
+                <motion.span
+                  key={star.id}
+                  style={{
+                    left: star.left,
+                    top: star.top,
+                    fontSize: `${star.size}px`,
+                  }}
+                  animate={
+                    spotifyIsPlaying
+                      ? {
+                          opacity: [0.15, 0.9, 0.15],
+                          scale: [0.7, 1.25, 0.7],
+                          y: [0, -5, 0],
+                        }
+                      : { opacity: 0, scale: 0.7, y: 0 }
+                  }
+                  transition={{
+                    duration: 1.8,
+                    delay: star.delay,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  ✦
+                </motion.span>
+              ))}
+            </div>
 
             <span className="coverNumber">
               {currentSong.number}
@@ -2678,23 +2755,23 @@ function restartExperience() {
 </button>
 
             <a
-  className="finalPrimaryButton finalSpotifyButton"
-  href={currentSong.spotifyUrl}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <Image
-    src="/spotify-logo.png"
-    alt="Spotify"
-    width={30}
-    height={30}
-    className="finalSpotifyButtonLogo"
-  />
+              className="finalPrimaryButton finalSpotifyButton"
+              href={currentSong.spotifyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/spotify-logo.png"
+                alt="Spotify"
+                width={30}
+                height={30}
+                className="finalSpotifyButtonLogo"
+              />
 
-  <span className="finalSpotifyButtonText">
-    Escuchar en Spotify
-  </span>
-</a>
+              <span className="finalSpotifyButtonText">
+                Escuchar en Spotify
+              </span>
+            </a>
           </div>
         </motion.article>
       </AnimatePresence>
@@ -2754,7 +2831,7 @@ function restartExperience() {
 )}
 
 <AnimatePresence>
-  {showSongs && !showSongIndex && !showFinal && (
+  {showSongs && !showSongIndex && !showFinal && !showFinalPrelude && (
     <motion.nav
       key="mobile-song-dock"
       className="mobileSongDock"
@@ -3043,6 +3120,98 @@ function restartExperience() {
 </AnimatePresence>
 
 <AnimatePresence>
+  {showFinalPrelude && (
+    <motion.section
+      id="final-prelude"
+      className="finalPreludeSection"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, filter: "blur(6px)" }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+    >
+      <div className="finalPreludeStars" aria-hidden="true">
+        {preludeStars.map((star) => (
+          <motion.span
+            key={star.id}
+            style={{
+              left: star.left,
+              top: star.top,
+              fontSize: `${star.size}px`,
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{
+              opacity: [0.2, 0.9, 0.2],
+              scale: [0.7, 1.25, 0.7],
+            }}
+            transition={{
+              duration: 2.4,
+              delay: star.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            ✦
+          </motion.span>
+        ))}
+      </div>
+
+      <motion.div
+        className="finalPreludeContent"
+        initial={{ opacity: 0, y: 32 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.25 }}
+      >
+        <motion.span
+          className="finalPreludeEyebrow"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.65 }}
+        >
+          40 canciones después
+        </motion.span>
+
+        <motion.div
+          className="finalPreludeLine"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.9, delay: 0.8 }}
+        />
+
+        <motion.h2
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.05 }}
+        >
+          Después de todas estas canciones…
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75, delay: 1.35 }}
+        >
+          Todavía me falta decirte algo.
+        </motion.p>
+
+        <motion.button
+          type="button"
+          className="openFinalLetterButton"
+          onClick={openFinalLetter}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 1.75 }}
+          whileHover={{ y: -3, scale: 1.015 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span>Leer mi carta para ti</span>
+          <strong aria-hidden="true">♥</strong>
+        </motion.button>
+      </motion.div>
+    </motion.section>
+  )}
+</AnimatePresence>
+
+<AnimatePresence>
   {showFinal && (
     <motion.section
       id="final"
@@ -3093,7 +3262,30 @@ function restartExperience() {
       >
         <p className="finalEyebrow">Una última cosa</p>
 
-        <div className="finalHeart" aria-hidden="true">
+        <div
+          className="finalHeart finalHeartInteractive"
+          aria-hidden="true"
+          onPointerMove={(event) => {
+            const rectangle = event.currentTarget.getBoundingClientRect();
+            const x =
+              ((event.clientX - rectangle.left) / rectangle.width - 0.5) * 10;
+            const y =
+              ((event.clientY - rectangle.top) / rectangle.height - 0.5) * 8;
+
+            event.currentTarget.style.setProperty(
+              "--flower-shift-x",
+              `${x}px`
+            );
+            event.currentTarget.style.setProperty(
+              "--flower-shift-y",
+              `${y}px`
+            );
+          }}
+          onPointerLeave={(event) => {
+            event.currentTarget.style.setProperty("--flower-shift-x", "0px");
+            event.currentTarget.style.setProperty("--flower-shift-y", "0px");
+          }}
+        >
           {flowers.map((flower) => (
             <motion.span
               key={flower.id}
@@ -3157,45 +3349,88 @@ function restartExperience() {
           className="finalLetter"
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.6, duration: 0.8 }}
+          transition={{ delay: 1.15, duration: 0.8 }}
         >
-          <p>
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.55 }}
+            transition={{ duration: 0.75, ease: "easeOut" }}
+          >
             Hice esta página porque hay sentimientos que a veces me
             cuesta explicar directamente. Entonces decidí reunir
             canciones que, de una manera u otra, dicen algo de todo lo
             que provocas en mí.
-          </p>
+          </motion.p>
 
-          <p>
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.55 }}
+            transition={{ duration: 0.75, ease: "easeOut" }}
+          >
             Cada minuto, cada mensaje y cada detalle de esta página fue
             elegido pensando en ti. No espero que las canciones hablen
             por mí para siempre; solamente quería encontrar una forma
             bonita y sincera de enseñarte lo especial que te has vuelto
             para mí.
-          </p>
+          </motion.p>
 
-          <p>
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.55 }}
+            transition={{ duration: 0.75, ease: "easeOut" }}
+          >
             Me gustas por tu forma de ser, por tu sonrisa, por tus ojos
             cafés y por todas esas pequeñas cosas que hacen que seas tú.
             Me encanta seguir conociéndote y descubrir algo nuevo de ti
             cada vez.
-          </p>
+          </motion.p>
 
-          <p>
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.55 }}
+            transition={{ duration: 0.75, ease: "easeOut" }}
+          >
             No quiero apresurarte ni hacerte sentir presionada. Solo
             quiero que sepas que mis intenciones contigo son sinceras y
             que me gustaría construir algo bonito, tranquilo y especial,
             paso a paso.
-          </p>
+          </motion.p>
 
-          <p className="finalQuestion">
+          <motion.p
+            className="finalQuestion"
+            initial={{ opacity: 0, scale: 0.96, filter: "blur(5px)" }}
+            whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.7 }}
+            transition={{ duration: 0.85, ease: "easeOut" }}
+          >
             ¿Me darías la oportunidad de seguir escribiendo esta historia
             contigo?
-          </p>
+          </motion.p>
 
-          <span className="finalSignature">
+          <motion.span
+            className="finalSignature"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.8 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
             Con cariño, Emmanuel Roldan
-          </span>
+          </motion.span>
+        </motion.div>
+
+        <motion.div
+          className="snoopyIntro"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.85, margin: "0px 0px -4% 0px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <span>Un último detalle</span>
+          <p>Y como sé que mereces flores…</p>
         </motion.div>
 
         <div className="snoopyOutsideLetter">
@@ -3259,57 +3494,97 @@ function restartExperience() {
 
       <div
         className={
-          showSongs && !showFinal
+          showSongs && !showFinal && !showFinalPrelude
             ? "spotifyFloatingPlayer spotifyFloatingPlayerVisible"
             : "spotifyFloatingPlayer"
         }
         aria-label="Reproductor del fragmento seleccionado"
       >
         <div className="spotifySnippetHeader">
-          <div className="spotifySnippetInformation">
-            <small>Fragmento seleccionado</small>
-            <strong>{currentSong.title}</strong>
-            <span>
-              {currentSong.startTime} — {currentSong.endTime}
-            </span>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSong.number}
+              className="spotifyPlayerTrack"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <div className="spotifyPlayerCover">
+                <Image
+                  src={currentSong.cover}
+                  alt=""
+                  fill
+                  sizes="58px"
+                />
 
-          <button
-            type="button"
-            className="spotifySnippetControl"
-            onClick={toggleSnippetPlayback}
-            disabled={!spotifyReady || spotifyIsBuffering}
-            aria-label={
-              spotifyIsPlaying
-                ? "Pausar fragmento"
+                <div
+                  className={
+                    spotifyIsPlaying
+                      ? "spotifyEqualizer spotifyEqualizerPlaying"
+                      : "spotifyEqualizer"
+                  }
+                  aria-hidden="true"
+                >
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              </div>
+
+              <div className="spotifySnippetInformation">
+                <small>
+                  Canción {currentSongIndex + 1} de {songs.length}
+                </small>
+                <strong>{currentSong.title}</strong>
+                <span>{currentSong.artist}</span>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="spotifySnippetControls">
+            <button
+              type="button"
+              className="spotifyRestartControl"
+              onClick={() => void restartSnippet()}
+              disabled={!spotifyReady || spotifyIsBuffering}
+              aria-label="Reiniciar fragmento"
+            >
+              ↺
+            </button>
+
+            <button
+              type="button"
+              className="spotifySnippetControl"
+              onClick={toggleSnippetPlayback}
+              disabled={!spotifyReady || spotifyIsBuffering}
+              aria-label={
+                spotifyIsPlaying
+                  ? "Pausar fragmento"
+                  : spotifyHasReachedEnd
+                    ? "Repetir fragmento"
+                    : "Reproducir fragmento"
+              }
+            >
+              {spotifyIsPlaying
+                ? "❚❚"
                 : spotifyHasReachedEnd
-                  ? "Repetir fragmento"
-                  : "Reproducir fragmento"
-            }
-          >
-            {spotifyIsPlaying
-              ? "❚❚"
-              : spotifyHasReachedEnd
-                ? "↻"
-                : "▶"}
-          </button>
+                  ? "↻"
+                  : "▶"}
+            </button>
+          </div>
         </div>
 
-        <div
-          className="spotifyLocalProgress"
-          aria-hidden="true"
-        >
+        <div className="spotifyLocalProgress" aria-hidden="true">
           <motion.div
             className="spotifyLocalProgressFill"
             animate={{
               width:
-                audioRef.current?.duration &&
-                Number.isFinite(audioRef.current.duration)
+                audioDurationSeconds > 0
                   ? `${Math.min(
                       100,
-                      (spotifyPositionSeconds /
-                        audioRef.current.duration) *
-                        100
+                      (spotifyPositionSeconds / audioDurationSeconds) * 100
                     )}%`
                   : "0%",
             }}
@@ -3317,19 +3592,23 @@ function restartExperience() {
           />
         </div>
 
-        <p className="spotifySnippetStatus">
-          {audioError
-            ? audioError
-            : spotifyIsBuffering
-              ? "Cargando el fragmento..."
-              : spotifyHasReachedEnd
-                ? "Fragmento terminado. Puedes repetirlo."
-                : spotifyIsPlaying
-                  ? `Sonando · ${formatSeconds(
-                      spotifyPositionSeconds
-                    )}`
-                  : "Pausado"}
-        </p>
+        <div className="spotifyPlayerFooter">
+          <span>
+            {formatSeconds(spotifyPositionSeconds)} / {formatSeconds(audioDurationSeconds)}
+          </span>
+
+          <p className="spotifySnippetStatus">
+            {audioError
+              ? audioError
+              : spotifyIsBuffering
+                ? "Cargando…"
+                : spotifyHasReachedEnd
+                  ? "Listo para repetir"
+                  : spotifyIsPlaying
+                    ? "Sonando ahora"
+                    : "Pausado"}
+          </p>
+        </div>
       </div>
 
       <style jsx global>{`
@@ -3338,13 +3617,13 @@ function restartExperience() {
           z-index: 8500;
           right: 18px;
           bottom: 18px;
-          width: min(430px, calc(100% - 36px));
+          width: min(460px, calc(100% - 36px));
           padding: 12px;
           border: 1px solid rgba(255, 255, 255, 0.16);
-          border-radius: 24px;
+          border-radius: 25px;
           background: rgba(24, 13, 18, 0.94);
           box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
-          backdrop-filter: blur(20px);
+          backdrop-filter: blur(22px);
           opacity: 0;
           visibility: hidden;
           pointer-events: none;
@@ -3363,11 +3642,77 @@ function restartExperience() {
         }
 
         .spotifySnippetHeader {
-          margin-bottom: 9px;
+          margin-bottom: 10px;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 14px;
+          gap: 13px;
+        }
+
+        .spotifyPlayerTrack {
+          min-width: 0;
+          flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 11px;
+        }
+
+        .spotifyPlayerCover {
+          position: relative;
+          flex: 0 0 58px;
+          width: 58px;
+          height: 58px;
+          overflow: hidden;
+          border-radius: 16px;
+          box-shadow: 0 9px 24px rgba(0, 0, 0, 0.28);
+        }
+
+        .spotifyPlayerCover img {
+          object-fit: cover;
+        }
+
+        .spotifyEqualizer {
+          position: absolute;
+          right: 5px;
+          bottom: 5px;
+          height: 20px;
+          padding: 4px 5px;
+          display: flex;
+          align-items: flex-end;
+          gap: 2px;
+          border-radius: 8px;
+          background: rgba(20, 11, 15, 0.74);
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .spotifyEqualizerPlaying {
+          opacity: 1;
+        }
+
+        .spotifyEqualizer span {
+          width: 2px;
+          height: 5px;
+          border-radius: 999px;
+          background: #1ed760;
+          animation: spotifyEqualizerPulse 0.75s ease-in-out infinite alternate;
+        }
+
+        .spotifyEqualizer span:nth-child(2) {
+          animation-delay: 0.16s;
+        }
+
+        .spotifyEqualizer span:nth-child(3) {
+          animation-delay: 0.32s;
+        }
+
+        .spotifyEqualizer span:nth-child(4) {
+          animation-delay: 0.48s;
+        }
+
+        @keyframes spotifyEqualizerPulse {
+          from { height: 4px; }
+          to { height: 13px; }
         }
 
         .spotifySnippetInformation {
@@ -3386,56 +3731,73 @@ function restartExperience() {
         }
 
         .spotifySnippetInformation strong {
+          width: 100%;
           overflow: hidden;
           color: #f8eee8;
           font-family: Georgia, "Times New Roman", serif;
-          font-size: 0.92rem;
+          font-size: 0.94rem;
           font-weight: 400;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
 
         .spotifySnippetInformation span {
+          width: 100%;
+          overflow: hidden;
           color: rgba(248, 238, 232, 0.55);
           font-size: 0.67rem;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .spotifySnippetControls {
+          flex: 0 0 auto;
+          display: flex;
+          align-items: center;
+          gap: 7px;
+        }
+
+        .spotifyRestartControl,
+        .spotifySnippetControl {
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .spotifyRestartControl {
+          width: 34px;
+          height: 34px;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: rgba(255, 255, 255, 0.06);
+          color: rgba(248, 238, 232, 0.75);
+          font-size: 1rem;
         }
 
         .spotifySnippetControl {
-          flex: 0 0 auto;
-          width: 43px;
-          height: 43px;
-          display: grid;
-          place-items: center;
+          width: 45px;
+          height: 45px;
           border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 50%;
           background: #efc6d0;
           color: #311720;
           font-size: 1rem;
         }
 
+        .spotifyRestartControl:hover,
+        .spotifySnippetControl:hover {
+          transform: scale(1.06);
+        }
+
+        .spotifyRestartControl:disabled,
         .spotifySnippetControl:disabled {
           cursor: wait;
           opacity: 0.5;
         }
 
-        .spotifyEmbedHost {
-          min-height: 80px;
-          overflow: hidden;
-          border-radius: 16px;
-        }
-
-        .spotifyEmbedHost iframe {
-          display: block;
-          width: 100%;
-          border: 0;
-          border-radius: 16px;
-        }
-
-
         .spotifyLocalProgress {
           width: 100%;
           height: 4px;
-          margin: 4px 0 9px;
+          margin: 4px 0 8px;
           overflow: hidden;
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.14);
@@ -3444,14 +3806,25 @@ function restartExperience() {
         .spotifyLocalProgressFill {
           height: 100%;
           border-radius: inherit;
-          background: #1ed760;
+          background: linear-gradient(90deg, #1ed760, #7df1a6);
+          box-shadow: 0 0 12px rgba(30, 215, 96, 0.35);
+        }
+
+        .spotifyPlayerFooter {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          color: rgba(248, 238, 232, 0.47);
+          font-size: 0.61rem;
         }
 
         .spotifySnippetStatus {
-          margin: 8px 2px 0;
-          color: rgba(248, 238, 232, 0.5);
-          font-size: 0.62rem;
-          text-align: center;
+          margin: 0;
+          overflow: hidden;
+          text-align: right;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .welcomeButton:disabled,
@@ -3467,6 +3840,40 @@ function restartExperience() {
             bottom: calc(104px + env(safe-area-inset-bottom));
             left: 14px;
             width: auto;
+          }
+        }
+
+        @media (max-width: 460px) {
+          .spotifyFloatingPlayer {
+            padding: 10px;
+            border-radius: 22px;
+          }
+
+          .spotifyPlayerCover {
+            flex-basis: 50px;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+          }
+
+          .spotifyRestartControl {
+            width: 32px;
+            height: 32px;
+          }
+
+          .spotifySnippetControl {
+            width: 41px;
+            height: 41px;
+          }
+
+          .spotifySnippetInformation strong {
+            font-size: 0.84rem;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .spotifyEqualizer span {
+            animation: none;
           }
         }
       `}</style>

@@ -16,7 +16,14 @@
 }
 
 html {
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
+}
+
+body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -327,6 +334,48 @@ h1 span {
   border-radius: 24px;
   pointer-events: none;
 }
+
+.songCover::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(221, 160, 174, 0.28), transparent 58%);
+  transition: opacity 0.4s ease;
+}
+
+.songCoverPlaying::after {
+  opacity: 1;
+  animation: songCoverGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes songCoverGlow {
+  0%, 100% { transform: scale(0.96); opacity: 0.42; }
+  50% { transform: scale(1.05); opacity: 0.85; }
+}
+
+.songPlayingStars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.songPlayingStarsVisible {
+  opacity: 1;
+}
+
+.songPlayingStars span {
+  position: absolute;
+  color: rgba(248, 238, 232, 0.82);
+  filter: drop-shadow(0 0 7px rgba(248, 238, 232, 0.42));
+}
+
 
 .coverNumber {
   position: relative;
@@ -731,6 +780,114 @@ h1 span {
   }
 }
 
+.finalPreludeSection {
+  position: relative;
+  min-height: 100svh;
+  padding: 90px 24px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #f8eee8;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(135, 58, 82, 0.32), transparent 35%),
+    linear-gradient(160deg, #160d11 0%, #0c0809 65%, #050405 100%);
+  scroll-margin-top: 0;
+}
+
+.finalPreludeSection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(221, 160, 174, 0.08), transparent 28%),
+    radial-gradient(circle at 85% 82%, rgba(128, 144, 120, 0.08), transparent 30%);
+  pointer-events: none;
+}
+
+.finalPreludeStars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.finalPreludeStars span {
+  position: absolute;
+  color: rgba(244, 214, 221, 0.72);
+  filter: drop-shadow(0 0 8px rgba(244, 214, 221, 0.35));
+}
+
+.finalPreludeContent {
+  position: relative;
+  z-index: 2;
+  width: min(720px, 100%);
+  text-align: center;
+}
+
+.finalPreludeEyebrow {
+  color: #dda0ae;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.finalPreludeLine {
+  width: min(210px, 55%);
+  height: 1px;
+  margin: 24px auto 30px;
+  background: linear-gradient(90deg, transparent, rgba(244, 214, 221, 0.75), transparent);
+  transform-origin: center;
+}
+
+.finalPreludeContent h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.5rem, 7vw, 5.2rem);
+  font-weight: 400;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+.finalPreludeContent > p {
+  margin-top: 23px;
+  color: rgba(248, 238, 232, 0.7);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.15rem, 3vw, 1.5rem);
+}
+
+.openFinalLetterButton {
+  margin-top: 38px;
+  padding: 15px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #f4d6dd;
+  border-radius: 999px;
+  background: #f4d6dd;
+  color: #2b151d;
+  box-shadow: 0 16px 44px rgba(221, 160, 174, 0.16);
+}
+
+.openFinalLetterButton span {
+  font-weight: 700;
+}
+
+.openFinalLetterButton strong {
+  font-size: 1rem;
+}
+
+@media (max-width: 520px) {
+  .finalPreludeSection {
+    padding: 70px 20px;
+  }
+
+  .openFinalLetterButton {
+    width: 100%;
+    max-width: 340px;
+  }
+}
+
 .finalSection {
   position: relative;
   min-height: 100vh;
@@ -823,6 +980,9 @@ h1 span {
   color: #f0c2cd;
   font-size: clamp(0.85rem, 3vw, 1.45rem);
   text-shadow: 0 0 12px rgba(240, 194, 205, 0.4);
+  margin-left: var(--flower-shift-x, 0px);
+  margin-top: var(--flower-shift-y, 0px);
+  transition: margin 0.55s ease-out, filter 0.4s ease;
 }
 
 .finalFlower:nth-child(3n) {
@@ -861,6 +1021,9 @@ h1 span {
   font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 400;
   line-height: 1;
+  text-shadow:
+    0 0 22px rgba(221, 160, 174, 0.28),
+    0 0 70px rgba(221, 160, 174, 0.15);
 }
 
 .finalLetter {
@@ -874,6 +1037,26 @@ h1 span {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
   text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.finalLetter::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.11;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.7) 0.7px, transparent 0.9px),
+    radial-gradient(circle at 75% 65%, rgba(255, 255, 255, 0.5) 0.6px, transparent 0.9px);
+  background-size: 19px 19px, 27px 27px;
+  mix-blend-mode: soft-light;
+}
+
+.finalLetter > * {
+  position: relative;
+  z-index: 1;
 }
 
 .finalLetter p {
@@ -1977,11 +2160,35 @@ h1 span {
   }
 }
 
+/* Transición entre la carta y el Snoopy */
+.snoopyIntro {
+  margin: 52px auto 8px;
+  text-align: center;
+}
+
+.snoopyIntro span {
+  color: rgba(248, 238, 232, 0.48);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.snoopyIntro p {
+  margin-top: 11px;
+  color: #f4d6dd;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.55rem, 4vw, 2.35rem);
+  font-style: italic;
+}
+
 /* Snoopy fuera de la carta */
 .snoopyOutsideLetter {
   width: 100%;
-  margin: 34px auto 26px;
+  min-height: 310px;
+  margin: 18px auto 26px;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -2041,30 +2248,79 @@ h1 span {
   }
 }
 
-/* Botones “Escuchar en Spotify” de cada canción */
-.songSpotifyButton {
-  align-self: flex-start;
-  margin-top: 34px;
+/* Pulido general para teléfono */
+.finalSection,
+.songsSection,
+.finalPreludeSection {
+  scroll-margin-top: 0;
 }
 
-@media (max-width: 650px) {
-  .songSpotifyButton {
-    align-self: stretch;
+@media (max-width: 800px) {
+  .songCover {
+    min-height: 470px;
+    padding: 32px 27px;
   }
-}
-.snoopyOutsideLetter {
-  width: 100%;
-  min-height: 310px;
-  margin: 46px auto 26px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  .songContent {
+    overflow-wrap: anywhere;
+  }
+
+  .finalLetter p {
+    line-height: 1.82;
+  }
 }
 
 @media (max-width: 520px) {
-  .snoopyOutsideLetter {
-    min-height: 290px;
+  .songsSection {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .songCard {
+    width: 100%;
+    border-radius: 25px;
+  }
+
+  .songCover {
+    min-height: 410px;
+    padding: 27px 22px;
+  }
+
+  .songContent {
+    padding: 34px 21px 42px;
+  }
+
+  .lyrics {
+    padding: 24px 18px;
+  }
+
+  .finalLetter {
+    padding: 30px 20px;
+  }
+
+  .snoopyIntro {
     margin-top: 60px;
+  }
+
+  .snoopyOutsideLetter {
+    min-height: 300px;
+    margin-top: 18px;
+  }
+
+  .finalSpotifyButton,
+  .finalSecondaryButton,
+  .finalTextButton {
+    min-height: 54px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .songCoverPlaying::after,
+  .songPlayingStars span {
+    animation: none;
+  }
+
+  .finalFlower {
+    transition: none;
   }
 }
