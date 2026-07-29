@@ -2821,7 +2821,7 @@ function restartExperience() {
             rel="noopener noreferrer"
           >
             <span>▶</span>
-            Abrir la playlist completa
+            Abrir la playlist completa en Spotify
           </a>
 
           <button
