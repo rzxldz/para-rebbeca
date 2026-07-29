@@ -11,8 +11,6 @@ import {
   AnimatePresence,
   motion,
   useInView,
-  useScroll,
-  useSpring,
   type PanInfo,
 } from "motion/react";
 
@@ -1727,21 +1725,8 @@ export default function Home() {
   const songCarouselItemRefs =
     useRef<Array<HTMLButtonElement | null>>([]);
   const activeSongCardRef = useRef<HTMLElement | null>(null);
-
-  const { scrollYProgress: activeSongCardScrollProgress } =
-    useScroll({
-      target: activeSongCardRef,
-      offset: ["start 82%", "end 32%"],
-    });
-
-  const smoothSongCardScrollProgress = useSpring(
-    activeSongCardScrollProgress,
-    {
-      stiffness: 120,
-      damping: 28,
-      mass: 0.28,
-    }
-  );
+  const [songCardReadingProgress, setSongCardReadingProgress] =
+    useState(0);
 
   const [spotifyIsPlaying, setSpotifyIsPlaying] = useState(false);
   const [spotifyIsBuffering, setSpotifyIsBuffering] = useState(false);
@@ -2309,6 +2294,72 @@ useEffect(() => {
   showFinalPrelude,
 ]);
 
+useEffect(() => {
+  if (!showSongs || showFinal || showFinalPrelude) {
+    setSongCardReadingProgress(0);
+    return;
+  }
+
+  let animationFrame = 0;
+
+  const updateSongCardReadingProgress = () => {
+    const card = activeSongCardRef.current;
+
+    if (!card) {
+      setSongCardReadingProgress(0);
+      return;
+    }
+
+    const cardBounds = card.getBoundingClientRect();
+    const viewportHeight =
+      window.innerHeight ||
+      document.documentElement.clientHeight;
+
+    const startPoint = viewportHeight * 0.82;
+    const totalDistance =
+      cardBounds.height + viewportHeight * 0.5;
+
+    const nextProgress =
+      (startPoint - cardBounds.top) / totalDistance;
+
+    setSongCardReadingProgress(
+      Math.min(1, Math.max(0, nextProgress))
+    );
+  };
+
+  const requestProgressUpdate = () => {
+    window.cancelAnimationFrame(animationFrame);
+
+    animationFrame = window.requestAnimationFrame(
+      updateSongCardReadingProgress
+    );
+  };
+
+  requestProgressUpdate();
+
+  window.addEventListener("scroll", requestProgressUpdate, {
+    passive: true,
+  });
+  window.addEventListener("resize", requestProgressUpdate);
+
+  return () => {
+    window.cancelAnimationFrame(animationFrame);
+    window.removeEventListener(
+      "scroll",
+      requestProgressUpdate
+    );
+    window.removeEventListener(
+      "resize",
+      requestProgressUpdate
+    );
+  };
+}, [
+  currentSongIndex,
+  showSongs,
+  showFinal,
+  showFinalPrelude,
+]);
+
 const currentSong = songs[currentSongIndex];
 
 const currentChapter =
@@ -2458,6 +2509,33 @@ async function restartSnippet() {
   }
 }
 
+function scrollToCurrentSongCover(delay = 160) {
+  window.setTimeout(() => {
+    window.requestAnimationFrame(() => {
+      const activeCover = document.querySelector<HTMLElement>(
+        ".songCard .songCover"
+      );
+
+      if (!activeCover) {
+        return;
+      }
+
+      const fixedHeaderOffset =
+        window.innerWidth <= 650 ? 82 : 102;
+
+      const targetPosition =
+        window.scrollY +
+        activeCover.getBoundingClientRect().top -
+        fixedHeaderOffset;
+
+      window.scrollTo({
+        top: Math.max(0, targetPosition),
+        behavior: "smooth",
+      });
+    });
+  }, delay);
+}
+
 function previousSong() {
   if (currentSongIndex === 0) {
     return;
@@ -2471,12 +2549,7 @@ function previousSong() {
   void playSongSnippet(targetIndex);
   setCurrentSongIndex(targetIndex);
 
-  setTimeout(() => {
-    document.getElementById("canciones")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 100);
+  scrollToCurrentSongCover();
 }
 
 
@@ -2504,12 +2577,7 @@ function nextSong() {
   void playSongSnippet(targetIndex);
   setCurrentSongIndex(targetIndex);
 
-  setTimeout(() => {
-    document.getElementById("canciones")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 100);
+  scrollToCurrentSongCover();
 }
 
 
@@ -2527,12 +2595,7 @@ void playSongSnippet(songIndex);
   setShowSongIndex(false);
   setShowOnlyFavorites(false);
 
-  setTimeout(() => {
-    document.getElementById("canciones")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 150);
+  scrollToCurrentSongCover(190);
 }
 
 function handleSongDragEnd(
@@ -3162,8 +3225,12 @@ function confirmRestartExperience() {
             aria-hidden="true"
           >
             <motion.span
-              style={{
-                scaleY: smoothSongCardScrollProgress,
+              animate={{
+                scaleY: songCardReadingProgress,
+              }}
+              transition={{
+                duration: 0.12,
+                ease: "linear",
               }}
             />
           </div>

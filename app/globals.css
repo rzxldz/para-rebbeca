@@ -3349,19 +3349,32 @@ input {
   #canciones,
   #final-prelude,
   #final {
-    scroll-margin-top: 82px;
+    scroll-margin-top: 72px;
   }
 
   .experienceSectionIndicator {
-    top: max(8px, env(safe-area-inset-top));
-    width: calc(100% - 20px);
+    top: max(7px, env(safe-area-inset-top));
+    width: calc(100% - 16px);
   }
 
   .experienceSectionIndicatorInner {
-    padding: 9px 11px 10px;
-    grid-template-columns: 78px minmax(0, 1fr);
-    gap: 10px;
-    border-radius: 18px;
+    padding: 9px 13px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    border-radius: 16px;
+    background: rgba(25, 13, 18, 0.91);
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .experienceSectionIndicatorCurrent {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   .experienceSectionIndicatorCurrent > span {
@@ -3369,25 +3382,19 @@ input {
   }
 
   .experienceSectionIndicatorCurrent > small {
-    font-size: 0.52rem;
+    flex: 0 0 auto;
+    font-size: 0.53rem;
+  }
+
+  .experienceSectionProgress {
+    width: 100%;
+  }
+
+  .experienceSectionProgressTrack {
+    height: 3px;
   }
 
   .experienceSectionSteps {
-    margin-top: 6px;
-  }
-
-  .experienceSectionStep {
-    gap: 0;
-  }
-
-  .experienceSectionStep > span {
-    width: 15px;
-    height: 15px;
-    flex-basis: 15px;
-    font-size: 0.48rem;
-  }
-
-  .experienceSectionStep > small {
     display: none;
   }
 }
