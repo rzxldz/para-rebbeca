@@ -2052,3 +2052,19 @@ h1 span {
     align-self: stretch;
   }
 }
+.snoopyOutsideLetter {
+  width: 100%;
+  min-height: 310px;
+  margin: 46px auto 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 520px) {
+  .snoopyOutsideLetter {
+    min-height: 290px;
+    margin-top: 60px;
+  }
+}

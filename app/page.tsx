@@ -1385,9 +1385,10 @@ function SnoopyWithFlowers() {
   const snoopyRef = useRef<HTMLDivElement>(null);
 
   const snoopyIsVisible = useInView(snoopyRef, {
-    once: true,
-    amount: 0.35,
-  });
+  once: true,
+  amount: 0.85,
+  margin: "0px 0px -5% 0px",
+});
 
   return (
     <motion.div
@@ -1409,9 +1410,10 @@ function SnoopyWithFlowers() {
         }
   }
   transition={{
-    duration: 0.55,
-    ease: "easeOut",
-  }}
+  duration: 0.55,
+  delay: snoopyIsVisible ? 0.35 : 0,
+  ease: "easeOut",
+}}
   aria-label="Snoopy dibujado en relieve sosteniendo flores"
 >
       <svg
