@@ -11,6 +11,8 @@ import {
   AnimatePresence,
   motion,
   useInView,
+  useScroll,
+  useSpring,
   type PanInfo,
 } from "motion/react";
 
@@ -1267,24 +1269,73 @@ const experienceStages: ExperienceStage[] = [
   "final",
 ];
 
+const experienceNavigationSteps = [
+  {
+    id: "inicio",
+    label: "Inicio",
+  },
+  {
+    id: "canciones",
+    label: "Canciones",
+  },
+  {
+    id: "carta",
+    label: "Carta",
+  },
+  {
+    id: "final",
+    label: "Final",
+  },
+];
+
 const songVariants = {
   enter: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 90 : -90,
-    scale: 0.98,
+    x: direction > 0 ? 260 : -260,
+    scale: 0.965,
+    filter: "blur(5px)",
   }),
 
   center: {
     opacity: 1,
     x: 0,
     scale: 1,
+    filter: "blur(0px)",
   },
 
   exit: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -90 : 90,
-    scale: 0.98,
+    x: direction > 0 ? -260 : 260,
+    scale: 0.965,
+    filter: "blur(5px)",
   }),
+};
+
+const songAssemblyGroupVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      delayChildren: 0.24,
+      staggerChildren: 0.13,
+    },
+  },
+};
+
+const songAssemblyItemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+    filter: "blur(6px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.58,
+      ease: "easeOut" as const,
+    },
+  },
 };
 
 const snoopyOutlinePaths = [
@@ -1672,6 +1723,25 @@ export default function Home() {
 
   const audioRef = useRef<HTMLVideoElement | null>(null);
   const loadedSongIndexRef = useRef<number | null>(null);
+  const songCarouselRef = useRef<HTMLDivElement | null>(null);
+  const songCarouselItemRefs =
+    useRef<Array<HTMLButtonElement | null>>([]);
+  const activeSongCardRef = useRef<HTMLElement | null>(null);
+
+  const { scrollYProgress: activeSongCardScrollProgress } =
+    useScroll({
+      target: activeSongCardRef,
+      offset: ["start 82%", "end 32%"],
+    });
+
+  const smoothSongCardScrollProgress = useSpring(
+    activeSongCardScrollProgress,
+    {
+      stiffness: 120,
+      damping: 28,
+      mass: 0.28,
+    }
+  );
 
   const [spotifyIsPlaying, setSpotifyIsPlaying] = useState(false);
   const [spotifyIsBuffering, setSpotifyIsBuffering] = useState(false);
@@ -2199,6 +2269,46 @@ useEffect(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [showSongs, showSongIndex, showFinal, hasEntered, currentSongIndex]);
 
+useEffect(() => {
+  if (!showSongs || showFinal || showFinalPrelude) {
+    return;
+  }
+
+  const centerActiveSong = () => {
+    const carousel = songCarouselRef.current;
+    const activeItem =
+      songCarouselItemRefs.current[currentSongIndex];
+
+    if (!carousel || !activeItem) {
+      return;
+    }
+
+    const targetLeft =
+      activeItem.offsetLeft -
+      (carousel.clientWidth - activeItem.offsetWidth) / 2;
+
+    carousel.scrollTo({
+      left: Math.max(0, targetLeft),
+      behavior: "smooth",
+    });
+  };
+
+  const animationFrame =
+    window.requestAnimationFrame(centerActiveSong);
+
+  window.addEventListener("resize", centerActiveSong);
+
+  return () => {
+    window.cancelAnimationFrame(animationFrame);
+    window.removeEventListener("resize", centerActiveSong);
+  };
+}, [
+  currentSongIndex,
+  showSongs,
+  showFinal,
+  showFinalPrelude,
+]);
+
 const currentSong = songs[currentSongIndex];
 
 const currentChapter =
@@ -2209,6 +2319,26 @@ const currentChapter =
   ) ?? chapters[0];
 
 const progress = ((currentSongIndex + 1) / songs.length) * 100;
+
+const activeExperienceStep = showFinal
+  ? 3
+  : showFinalPrelude
+    ? 2
+    : showSongs
+      ? 1
+      : 0;
+
+const experienceProgressPercentage = showFinal
+  ? 100
+  : showFinalPrelude
+    ? 84
+    : showSongs
+      ? 24 + progress * 0.55
+      : showHeart
+        ? 18
+        : hasEntered
+          ? 8
+          : 0;
 
 async function playSongSnippet(songIndex: number): Promise<boolean> {
   const audio = audioRef.current;
@@ -2725,6 +2855,98 @@ function confirmRestartExperience() {
   )}
 </AnimatePresence>
 
+      <AnimatePresence>
+        {hasEntered && !isInitialLoading && (
+          <motion.nav
+            className="experienceSectionIndicator"
+            aria-label="Progreso de la experiencia"
+            initial={{
+              opacity: 0,
+              y: -22,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -18,
+            }}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+            }}
+          >
+            <div className="experienceSectionIndicatorInner">
+              <div className="experienceSectionIndicatorCurrent">
+                <span>
+                  {
+                    experienceNavigationSteps[
+                      activeExperienceStep
+                    ].label
+                  }
+                </span>
+
+                <small>
+                  {activeExperienceStep + 1} de{" "}
+                  {experienceNavigationSteps.length}
+                </small>
+              </div>
+
+              <div className="experienceSectionProgress">
+                <div
+                  className="experienceSectionProgressTrack"
+                  aria-hidden="true"
+                >
+                  <motion.span
+                    animate={{
+                      width: `${experienceProgressPercentage}%`,
+                    }}
+                    transition={{
+                      duration: 0.65,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  />
+                </div>
+
+                <ol className="experienceSectionSteps">
+                  {experienceNavigationSteps.map(
+                    (step, stepIndex) => {
+                      const isCompleted =
+                        stepIndex < activeExperienceStep;
+                      const isActive =
+                        stepIndex === activeExperienceStep;
+
+                      return (
+                        <li
+                          key={step.id}
+                          className={
+                            isActive
+                              ? "experienceSectionStep experienceSectionStepActive"
+                              : isCompleted
+                                ? "experienceSectionStep experienceSectionStepCompleted"
+                                : "experienceSectionStep"
+                          }
+                          aria-current={
+                            isActive ? "step" : undefined
+                          }
+                        >
+                          <span aria-hidden="true">
+                            {isCompleted ? "✓" : stepIndex + 1}
+                          </span>
+
+                          <small>{step.label}</small>
+                        </li>
+                      );
+                    }
+                  )}
+                </ol>
+              </div>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
       <section className="page">
         <div className="glow glowLeft" />
         <div className="glow glowRight" />
@@ -2913,9 +3135,11 @@ function confirmRestartExperience() {
     </div>
 
     <div className="songsList">
-      <AnimatePresence mode="wait" custom={navigationDirection}>
+      <div className="mainSongCarouselViewport">
+        <AnimatePresence mode="wait" custom={navigationDirection}>
         <motion.article
-          className="songCard draggableSongCard"
+          ref={activeSongCardRef}
+          className="songCard draggableSongCard songCardAssembling"
           key={currentSong.number}
           custom={navigationDirection}
           variants={songVariants}
@@ -2934,12 +3158,46 @@ function confirmRestartExperience() {
           }}
         >
           <div
+            className="songAssemblyProgressRail"
+            aria-hidden="true"
+          >
+            <motion.span
+              style={{
+                scaleY: smoothSongCardScrollProgress,
+              }}
+            />
+          </div>
+
+          <motion.div
             className={
               spotifyIsPlaying
                 ? "songCover songCoverPlaying"
                 : "songCover"
             }
+            initial={{
+              opacity: 0,
+              clipPath: "inset(0 100% 0 0 round 32px)",
+            }}
+            animate={{
+              opacity: 1,
+              clipPath: "inset(0 0% 0 0 round 32px)",
+            }}
+            transition={{
+              duration: 0.92,
+              delay: 0.08,
+              ease: [0.22, 1, 0.36, 1],
+            }}
           >
+            <motion.div
+              className="songAssemblyCoverImage"
+              initial={{ scale: 1.14, filter: "blur(5px)" }}
+              animate={{ scale: 1, filter: "blur(0px)" }}
+              transition={{
+                duration: 1.15,
+                delay: 0.13,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
             <Image
               className="coverImage"
               src={currentSong.cover}
@@ -2948,6 +3206,7 @@ function confirmRestartExperience() {
               sizes="(max-width: 800px) 100vw, 45vw"
               priority
             />
+            </motion.div>
 
             <div className="coverOverlay" />
 
@@ -2988,29 +3247,81 @@ function confirmRestartExperience() {
               ))}
             </div>
 
-            <span className="coverNumber">
+            <motion.span
+              className="coverNumber"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                duration: 0.5,
+                delay: 0.62,
+                ease: "easeOut",
+              }}
+            >
               {currentSong.number}
-            </span>
+            </motion.span>
 
-            <div className="coverText">
+            <motion.div
+              className="coverText"
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.65,
+                delay: 0.72,
+                ease: "easeOut",
+              }}
+            >
               <span>Para Regina</span>
               <strong>{currentSong.title}</strong>
               <small>{currentSong.artist}</small>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div className="songContent">
-            <span className="songNumber">
+          <motion.div
+            className="songContent"
+            variants={songAssemblyGroupVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.span
+              className="songNumber"
+              variants={songAssemblyItemVariants}
+            >
               CANCIÓN {currentSong.number}
-            </span>
+            </motion.span>
 
-            <h3>{currentSong.title}</h3>
+            <motion.h3 variants={songAssemblyItemVariants}>
+              {currentSong.title}
+            </motion.h3>
 
-            <p className="songArtist">
+            <motion.p
+              className="songArtist"
+              variants={songAssemblyItemVariants}
+            >
               {currentSong.artist}
-            </p>
+            </motion.p>
 
-            <div className="dedicatedTime">
+            <motion.div
+              className="dedicatedTime"
+              initial={{
+                opacity: 0,
+                y: 30,
+                scale: 0.98,
+              }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.62,
+                margin: "0px 0px -6% 0px",
+              }}
+              transition={{
+                duration: 0.62,
+                ease: "easeOut",
+              }}
+            >
               <div>
                 <span>El momento que te dedico</span>
 
@@ -3019,11 +3330,44 @@ function confirmRestartExperience() {
                 </strong>
               </div>
 
-              <span className="timeIcon">♫</span>
-            </div>
+              <motion.span
+                className="timeIcon"
+                initial={{ rotate: -18, scale: 0 }}
+                whileInView={{ rotate: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.8 }}
+                transition={{
+                  delay: 0.18,
+                  type: "spring",
+                  stiffness: 240,
+                  damping: 17,
+                }}
+              >
+                ♫
+              </motion.span>
+            </motion.div>
 
             {currentSong.lyrics !== "" && (
-              <div className="lyrics">
+              <motion.div
+                key={`lyrics-${currentSong.number}`}
+                className="lyrics"
+                initial={{
+                  opacity: 1,
+                  y: 26,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                viewport={{
+                  once: true,
+                  amount: 0.05,
+                  margin: "0px 0px -2% 0px",
+                }}
+                transition={{
+                  duration: 0.72,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
                 <span className="quoteMark">“</span>
 
                 <p>
@@ -3046,17 +3390,42 @@ function confirmRestartExperience() {
                       : "Traducir al español"}
                   </button>
                 ) : null}
-              </div>
+              </motion.div>
             )}
 
-            <div className="personalDedication">
+            <motion.div
+              className="personalDedication"
+              initial={{
+                opacity: 0,
+                x: 34,
+                filter: "blur(5px)",
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+                filter: "blur(0px)",
+              }}
+              viewport={{
+                once: true,
+                amount: 0.45,
+                margin: "0px 0px -7% 0px",
+              }}
+              transition={{
+                duration: 0.72,
+                ease: "easeOut",
+              }}
+            >
               <span>Lo que quiero decirte</span>
 
               <p>{currentSong.message}</p>
-            </div>
+            </motion.div>
 
-            <button
+            <motion.button
   type="button"
+  initial={{ opacity: 0, y: 24 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.65 }}
+  transition={{ duration: 0.55, ease: "easeOut" }}
   className={
     favoriteSongs.includes(currentSong.number)
       ? "favoriteSongButton favoriteSongButtonActive"
@@ -3102,10 +3471,18 @@ function confirmRestartExperience() {
         : "Toca el corazón si esta canción te gustó"}
     </small>
   </div>
-</button>
+</motion.button>
 
-            <a
+            <motion.a
               className="finalPrimaryButton finalSpotifyButton"
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.7 }}
+              transition={{
+                duration: 0.55,
+                delay: 0.08,
+                ease: "easeOut",
+              }}
               href={currentSong.spotifyUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -3121,10 +3498,176 @@ function confirmRestartExperience() {
               <span className="finalSpotifyButtonText">
                 Escuchar en Spotify
               </span>
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
         </motion.article>
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
+
+      <motion.section
+        className="songCoverFlow"
+        aria-label="Carrusel de las 40 canciones"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.18, duration: 0.55 }}
+      >
+        <div className="songCoverFlowHeading">
+          <div>
+            <span>Recorre nuestra playlist</span>
+            <strong>Las 40 tarjetas</strong>
+          </div>
+
+          <p>
+            Toca una portada o desliza horizontalmente
+          </p>
+        </div>
+
+        <div className="songCoverFlowShell">
+          <div
+            className="songCoverFlowEdge songCoverFlowEdgeLeft"
+            aria-hidden="true"
+          />
+
+          <div
+            ref={songCarouselRef}
+            className="songCoverFlowTrack"
+          >
+            {songs.map((song, songIndex) => {
+              const isActiveSong =
+                songIndex === currentSongIndex;
+              const distanceFromActive = Math.min(
+                Math.abs(songIndex - currentSongIndex),
+                3
+              );
+              const isFavorite =
+                favoriteSongs.includes(song.number);
+
+              return (
+                <motion.button
+                  key={song.number}
+                  ref={(element) => {
+                    songCarouselItemRefs.current[songIndex] =
+                      element;
+                  }}
+                  type="button"
+                  className={
+                    isActiveSong
+                      ? "songCoverFlowCard songCoverFlowCardActive"
+                      : "songCoverFlowCard"
+                  }
+                  onClick={() => openSongFromIndex(songIndex)}
+                  aria-label={`Abrir canción ${song.number}: ${song.title}`}
+                  aria-current={
+                    isActiveSong ? "true" : undefined
+                  }
+                  animate={{
+                    scale: isActiveSong
+                      ? 1
+                      : distanceFromActive === 1
+                        ? 0.91
+                        : 0.83,
+                    opacity: isActiveSong
+                      ? 1
+                      : distanceFromActive === 1
+                        ? 0.78
+                        : 0.5,
+                    y: isActiveSong ? -8 : 0,
+                  }}
+                  whileHover={{
+                    scale: isActiveSong ? 1.025 : 0.94,
+                    opacity: 1,
+                    y: -8,
+                  }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{
+                    duration: 0.42,
+                    ease: "easeOut",
+                  }}
+                >
+                  <span className="songCoverFlowArtwork">
+                    <Image
+                      src={song.cover}
+                      alt=""
+                      width={240}
+                      height={240}
+                      sizes="(max-width: 650px) 150px, 205px"
+                    />
+
+                    <span
+                      className="songCoverFlowArtworkOverlay"
+                      aria-hidden="true"
+                    />
+
+                    <span className="songCoverFlowNumber">
+                      {song.number}
+                    </span>
+
+                    {isFavorite && (
+                      <span
+                        className="songCoverFlowFavorite"
+                        aria-label="Canción favorita"
+                      >
+                        ♥
+                      </span>
+                    )}
+
+                    {isActiveSong && (
+                      <motion.span
+                        className="songCoverFlowPlaying"
+                        initial={{ opacity: 0, scale: 0.7 }}
+                        animate={{
+                          opacity: 1,
+                          scale: [1, 1.08, 1],
+                        }}
+                        transition={{
+                          opacity: { duration: 0.25 },
+                          scale: {
+                            duration: 1.8,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          },
+                        }}
+                      >
+                        {spotifyIsPlaying ? "♫" : "▶"}
+                      </motion.span>
+                    )}
+                  </span>
+
+                  <span className="songCoverFlowInformation">
+                    <strong>{song.title}</strong>
+                    <small>{song.artist}</small>
+                  </span>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          <div
+            className="songCoverFlowEdge songCoverFlowEdgeRight"
+            aria-hidden="true"
+          />
+        </div>
+
+        <div className="songCoverFlowPosition">
+          <span>
+            {String(currentSongIndex + 1).padStart(2, "0")}
+          </span>
+
+          <div>
+            <motion.span
+              animate={{
+                width: `${progress}%`,
+              }}
+              transition={{
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+            />
+          </div>
+
+          <span>{String(songs.length).padStart(2, "0")}</span>
+        </div>
+      </motion.section>
 
       <div className="swipeHint">
         <span aria-hidden="true">←</span>

@@ -15,7 +15,10 @@ const metadataBase = new URL(
 
 export const metadata: Metadata = {
   metadataBase,
-  title: "Para Regina",
+  title: {
+    default: "🌸 Para Regina",
+    template: "%s · Para Regina",
+  },
   description: "40 canciones y algo que quería decirte.",
   applicationName: "Para Regina",
   openGraph: {

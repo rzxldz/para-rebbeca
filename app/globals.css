@@ -2623,3 +2623,777 @@ input {
     animation: none;
   }
 }
+
+/* ================================================================
+   COVER FLOW DE LAS 40 CANCIONES
+   ================================================================ */
+
+.songCoverFlow {
+  width: min(1180px, 100%);
+  margin: 48px auto 6px;
+}
+
+.songCoverFlowHeading {
+  width: min(1060px, 100%);
+  margin: 0 auto 15px;
+  padding: 0 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  text-align: left;
+}
+
+.songCoverFlowHeading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.songCoverFlowHeading span {
+  color: #873a52;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.songCoverFlowHeading strong {
+  color: #2b1b21;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.45rem, 3vw, 2.15rem);
+  font-weight: 400;
+}
+
+.songCoverFlowHeading p {
+  color: #88737a;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.songCoverFlowShell {
+  position: relative;
+}
+
+.songCoverFlowTrack {
+  width: 100%;
+  padding:
+    23px
+    max(24px, calc(50% - 108px))
+    33px;
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 50%;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x;
+}
+
+.songCoverFlowTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.songCoverFlowCard {
+  position: relative;
+  flex: 0 0 205px;
+  min-width: 0;
+  padding: 0 0 16px;
+  overflow: hidden;
+  scroll-snap-align: center;
+  border: 1px solid rgba(65, 37, 47, 0.13);
+  border-radius: 23px;
+  background: rgba(255, 255, 255, 0.62);
+  color: #2b1b21;
+  text-align: left;
+  box-shadow:
+    0 18px 45px rgba(71, 40, 51, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  transform-origin: center bottom;
+  transition:
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    background 0.28s ease;
+}
+
+.songCoverFlowCard:hover {
+  border-color: rgba(135, 58, 82, 0.4);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 24px 58px rgba(71, 40, 51, 0.17),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.songCoverFlowCard:focus-visible {
+  outline: 3px solid rgba(135, 58, 82, 0.45);
+  outline-offset: 4px;
+}
+
+.songCoverFlowCardActive {
+  border-color: rgba(135, 58, 82, 0.48);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 30px 70px rgba(71, 40, 51, 0.22),
+    0 0 0 1px rgba(221, 160, 174, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.songCoverFlowArtwork {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: block;
+  overflow: hidden;
+  border-radius: 22px 22px 15px 15px;
+  background: #25191d;
+}
+
+.songCoverFlowArtwork img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.songCoverFlowCard:hover .songCoverFlowArtwork img,
+.songCoverFlowCardActive .songCoverFlowArtwork img {
+  transform: scale(1.045);
+}
+
+.songCoverFlowArtworkOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(20, 11, 15, 0.05) 35%,
+      rgba(20, 11, 15, 0.62) 100%
+    );
+}
+
+.songCoverFlowNumber {
+  position: absolute;
+  left: 13px;
+  bottom: 11px;
+  z-index: 2;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.songCoverFlowFavorite {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  z-index: 3;
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  color: #ffffff;
+  background: rgba(112, 26, 54, 0.78);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.2);
+}
+
+.songCoverFlowPlaying {
+  position: absolute;
+  right: 12px;
+  bottom: 11px;
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 50%;
+  color: #2b151d;
+  background: #f4d6dd;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  font-size: 0.78rem;
+}
+
+.songCoverFlowInformation {
+  min-width: 0;
+  padding: 14px 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.songCoverFlowInformation strong {
+  overflow: hidden;
+  color: #2b1b21;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.98rem;
+  font-weight: 400;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.songCoverFlowInformation small {
+  overflow: hidden;
+  color: #88737a;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.songCoverFlowEdge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 4;
+  width: min(90px, 10vw);
+  pointer-events: none;
+}
+
+.songCoverFlowEdgeLeft {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    #f5eee8 0%,
+    rgba(245, 238, 232, 0) 100%
+  );
+}
+
+.songCoverFlowEdgeRight {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    #f5eee8 0%,
+    rgba(245, 238, 232, 0) 100%
+  );
+}
+
+.songCoverFlowPosition {
+  width: min(440px, calc(100% - 32px));
+  margin: 4px auto 0;
+  display: grid;
+  grid-template-columns: 28px minmax(80px, 1fr) 28px;
+  align-items: center;
+  gap: 11px;
+  color: #873a52;
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.songCoverFlowPosition > div {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(135, 58, 82, 0.12);
+}
+
+.songCoverFlowPosition > div > span {
+  width: 0;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #873a52, #dda0ae);
+}
+
+@media (max-width: 650px) {
+  .songCoverFlow {
+    width: calc(100% + 36px);
+    margin-left: -18px;
+    margin-top: 38px;
+  }
+
+  .songCoverFlowHeading {
+    padding: 0 24px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .songCoverFlowHeading p {
+    font-size: 0.72rem;
+  }
+
+  .songCoverFlowTrack {
+    padding:
+      19px
+      max(18px, calc(50% - 76px))
+      29px;
+    gap: 11px;
+  }
+
+  .songCoverFlowCard {
+    flex-basis: 150px;
+    padding-bottom: 13px;
+    border-radius: 19px;
+  }
+
+  .songCoverFlowArtwork {
+    border-radius: 18px 18px 13px 13px;
+  }
+
+  .songCoverFlowInformation {
+    padding: 11px 12px 0;
+  }
+
+  .songCoverFlowInformation strong {
+    font-size: 0.86rem;
+  }
+
+  .songCoverFlowInformation small {
+    font-size: 0.59rem;
+  }
+
+  .songCoverFlowPlaying {
+    width: 34px;
+    height: 34px;
+  }
+
+  .songCoverFlowEdge {
+    width: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .songCoverFlowTrack {
+    scroll-behavior: auto;
+  }
+
+  .songCoverFlowArtwork img {
+    transition: none;
+  }
+}
+
+/* ================================================================
+   CARRUSEL DE TARJETAS DE CANCIÓN
+   ================================================================ */
+
+.mainSongCarouselViewport {
+  width: 100%;
+  padding: 18px 0 12px;
+  overflow: hidden;
+}
+
+.songCoverFlowCard {
+  flex: 0 0 340px;
+  min-height: 168px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 124px minmax(0, 1fr);
+  align-items: stretch;
+  border-radius: 24px;
+}
+
+.songCoverFlowArtwork {
+  width: 124px;
+  height: 100%;
+  min-height: 168px;
+  aspect-ratio: auto;
+  border-radius: 23px 0 0 23px;
+}
+
+.songCoverFlowInformation {
+  padding: 22px 20px;
+  justify-content: center;
+  gap: 9px;
+}
+
+.songCoverFlowInformation::before {
+  content: "PARA REGINA";
+  color: #873a52;
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.songCoverFlowInformation strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 1.28rem;
+  line-height: 1.08;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.songCoverFlowInformation small {
+  font-size: 0.66rem;
+}
+
+.songCoverFlowCardActive {
+  box-shadow:
+    0 30px 74px rgba(71, 40, 51, 0.23),
+    0 0 0 2px rgba(221, 160, 174, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.songCoverFlowTrack {
+  padding-right: max(24px, calc(50% - 170px));
+  padding-left: max(24px, calc(50% - 170px));
+}
+
+/*
+  En celular la isla musical queda arriba del control para cambiar
+  de canción. Antes ambos tenían prácticamente el mismo bottom.
+*/
+@media (max-width: 800px) {
+  .spotifyFloatingPlayer {
+    bottom: calc(
+      106px + env(safe-area-inset-bottom)
+    ) !important;
+  }
+
+  .songsSection {
+    padding-bottom: 150px;
+  }
+}
+
+@media (max-width: 650px) {
+  .mainSongCarouselViewport {
+    width: calc(100% + 28px);
+    margin-left: -14px;
+    padding: 12px 14px 8px;
+  }
+
+  .songCoverFlowCard {
+    flex-basis: 264px;
+    min-height: 138px;
+    grid-template-columns: 94px minmax(0, 1fr);
+    border-radius: 20px;
+  }
+
+  .songCoverFlowArtwork {
+    width: 94px;
+    min-height: 138px;
+    border-radius: 19px 0 0 19px;
+  }
+
+  .songCoverFlowInformation {
+    padding: 17px 15px;
+    gap: 7px;
+  }
+
+  .songCoverFlowInformation strong {
+    font-size: 1.04rem;
+  }
+
+  .songCoverFlowInformation small {
+    font-size: 0.59rem;
+  }
+
+  .songCoverFlowTrack {
+    padding-right: max(18px, calc(50% - 132px));
+    padding-left: max(18px, calc(50% - 132px));
+  }
+
+  .songCoverFlowPlaying {
+    right: 8px;
+    bottom: 8px;
+    width: 31px;
+    height: 31px;
+  }
+}
+
+/* ================================================================
+   TARJETA PRINCIPAL QUE SE ARMA MIENTRAS SE RECORRE
+   ================================================================ */
+
+.songCardAssembling {
+  position: relative;
+  isolation: isolate;
+}
+
+.songAssemblyProgressRail {
+  position: absolute;
+  top: 24px;
+  right: 10px;
+  bottom: 24px;
+  z-index: 12;
+  width: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(135, 58, 82, 0.1);
+  pointer-events: none;
+}
+
+.songAssemblyProgressRail > span {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    #873a52,
+    #dda0ae,
+    #809078
+  );
+  box-shadow:
+    0 0 12px rgba(221, 160, 174, 0.48),
+    0 0 24px rgba(135, 58, 82, 0.2);
+  transform-origin: top;
+}
+
+.songAssemblyCoverImage {
+  position: absolute;
+  inset: 0;
+}
+
+.songCardAssembling .songCover,
+.songCardAssembling .songContent {
+  position: relative;
+}
+
+.songCardAssembling .songContent {
+  z-index: 2;
+}
+
+.songCardAssembling .dedicatedTime,
+.songCardAssembling .lyrics,
+.songCardAssembling .personalDedication,
+.songCardAssembling .favoriteSongButton,
+.songCardAssembling .finalSpotifyButton {
+  will-change: transform, opacity, filter, clip-path;
+}
+
+@media (max-width: 800px) {
+  .songAssemblyProgressRail {
+    top: 18px;
+    right: 6px;
+    bottom: 18px;
+    width: 2px;
+  }
+
+  .songCardAssembling .songContent {
+    padding-right: 31px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .songAssemblyProgressRail {
+    display: none;
+  }
+
+  .songCardAssembling .dedicatedTime,
+  .songCardAssembling .lyrics,
+  .songCardAssembling .personalDedication,
+  .songCardAssembling .favoriteSongButton,
+  .songCardAssembling .finalSpotifyButton {
+    will-change: auto;
+  }
+}
+
+/* La letra siempre permanece legible, incluso si el navegador móvil
+   retrasa el detector de entrada en pantalla. */
+.songCardAssembling .lyrics {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ================================================================
+   INDICADOR DE SECCIONES
+   ================================================================ */
+
+#canciones,
+#final-prelude,
+#final {
+  scroll-margin-top: 92px;
+}
+
+.experienceSectionIndicator {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 8500;
+  width: min(720px, calc(100% - 28px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.experienceSectionIndicatorInner {
+  padding: 11px 16px 12px;
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 17px;
+  border: 1px solid rgba(248, 238, 232, 0.15);
+  border-radius: 22px;
+  color: #f8eee8;
+  background: rgba(25, 13, 18, 0.82);
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.experienceSectionIndicatorCurrent {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.experienceSectionIndicatorCurrent > span {
+  overflow: hidden;
+  color: #f4d6dd;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.98rem;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.experienceSectionIndicatorCurrent > small {
+  color: rgba(248, 238, 232, 0.5);
+  font-size: 0.61rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.experienceSectionProgress {
+  min-width: 0;
+}
+
+.experienceSectionProgressTrack {
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(248, 238, 232, 0.11);
+}
+
+.experienceSectionProgressTrack > span {
+  width: 0;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #809078,
+    #dda0ae,
+    #f4d6dd
+  );
+  box-shadow: 0 0 14px rgba(221, 160, 174, 0.42);
+}
+
+.experienceSectionSteps {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+}
+
+.experienceSectionStep {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: rgba(248, 238, 232, 0.36);
+  text-align: center;
+}
+
+.experienceSectionStep > span {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(248, 238, 232, 0.17);
+  border-radius: 50%;
+  font-size: 0.53rem;
+  font-weight: 800;
+}
+
+.experienceSectionStep > small {
+  overflow: hidden;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.experienceSectionStepCompleted {
+  color: rgba(221, 160, 174, 0.72);
+}
+
+.experienceSectionStepCompleted > span {
+  border-color: rgba(221, 160, 174, 0.38);
+  background: rgba(221, 160, 174, 0.12);
+}
+
+.experienceSectionStepActive {
+  color: #f8eee8;
+}
+
+.experienceSectionStepActive > span {
+  border-color: #f4d6dd;
+  background: #f4d6dd;
+  color: #2b151d;
+  box-shadow: 0 0 16px rgba(244, 214, 221, 0.28);
+}
+
+@media (max-width: 650px) {
+  #canciones,
+  #final-prelude,
+  #final {
+    scroll-margin-top: 82px;
+  }
+
+  .experienceSectionIndicator {
+    top: max(8px, env(safe-area-inset-top));
+    width: calc(100% - 20px);
+  }
+
+  .experienceSectionIndicatorInner {
+    padding: 9px 11px 10px;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 10px;
+    border-radius: 18px;
+  }
+
+  .experienceSectionIndicatorCurrent > span {
+    font-size: 0.84rem;
+  }
+
+  .experienceSectionIndicatorCurrent > small {
+    font-size: 0.52rem;
+  }
+
+  .experienceSectionSteps {
+    margin-top: 6px;
+  }
+
+  .experienceSectionStep {
+    gap: 0;
+  }
+
+  .experienceSectionStep > span {
+    width: 15px;
+    height: 15px;
+    flex-basis: 15px;
+    font-size: 0.48rem;
+  }
+
+  .experienceSectionStep > small {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experienceSectionProgressTrack > span {
+    transition: none;
+  }
+}
