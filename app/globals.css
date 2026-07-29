@@ -1921,8 +1921,84 @@ h1 span {
 }
 
 .playlistButton {
+  width: min(100%, 420px);
+  min-height: 62px;
+  padding: 12px 22px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 13px;
+
+  border-radius: 999px;
+  background: #1ed760;
+  color: #08110b;
+
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+
+  box-shadow: 0 12px 30px rgba(30, 215, 96, 0.24);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.playlistButton:hover {
+  transform: translateY(-2px);
+  background: #20e468;
+  box-shadow: 0 16px 36px rgba(30, 215, 96, 0.32);
+}
+
+.playlistButton:active {
+  transform: translateY(0);
+}
+
+.playlistLogoWrapper {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+
+  display: grid;
+  place-items: center;
+}
+
+.playlistSpotifyLogo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+}
+
+.playlistButtonText {
+  display: block;
+  max-width: 300px;
+}
+@media (max-width: 520px) {
+  .playlistButton {
+    width: 100%;
+    min-height: 58px;
+    padding: 11px 17px;
+    gap: 10px;
+
+    font-size: 14px;
+  }
+
+  .playlistLogoWrapper {
+    width: 31px;
+    height: 31px;
+    flex-basis: 31px;
+  }
+
+  .playlistSpotifyLogo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .playlistButtonText {
+    max-width: 230px;
+  }
 }

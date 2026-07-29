@@ -2814,21 +2814,26 @@ function restartExperience() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
         >
-          <a
-            className="finalPrimaryButton"
-            href={playlistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-  src="/spotify-logo.png"
-  alt="Spotify"
-  width={22}
-  height={22}
-/>
+<a
+  href={playlistUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="playlistButton"
+>
+  <span className="playlistLogoWrapper">
+    <Image
+      src="/spotify-logo.png"
+      alt=""
+      width={34}
+      height={34}
+      className="playlistSpotifyLogo"
+    />
+  </span>
 
-<span>Abrir la playlist completa en Spotify</span>
-          </a>
+  <span className="playlistButtonText">
+    Abrir la playlist completa en Spotify
+  </span>
+</a>
 
           <button
             type="button"
