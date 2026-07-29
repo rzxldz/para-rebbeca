@@ -10,6 +10,7 @@ import Image from "next/image";
 import {
   AnimatePresence,
   motion,
+  useInView,
   type PanInfo,
 } from "motion/react";
 
@@ -1381,14 +1382,38 @@ const snoopyBouquetPaths = [
 ];
 
 function SnoopyWithFlowers() {
+  const snoopyRef = useRef<HTMLDivElement>(null);
+
+  const snoopyIsVisible = useInView(snoopyRef, {
+    once: true,
+    amount: 0.35,
+  });
+
   return (
     <motion.div
-      className="snoopyFinalScene"
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.55, ease: "easeOut" }}
-      aria-label="Snoopy dibujado en relieve sosteniendo flores"
-    >
+  ref={snoopyRef}
+  className="snoopyFinalScene"
+  initial={{
+    opacity: 0,
+    scale: 0.96,
+  }}
+  animate={
+    snoopyIsVisible
+      ? {
+          opacity: 1,
+          scale: 1,
+        }
+      : {
+          opacity: 0,
+          scale: 0.96,
+        }
+  }
+  transition={{
+    duration: 0.55,
+    ease: "easeOut",
+  }}
+  aria-label="Snoopy dibujado en relieve sosteniendo flores"
+>
       <svg
         className="snoopyOutlineSvg"
         viewBox="55 20 285 250"
@@ -1422,10 +1447,17 @@ function SnoopyWithFlowers() {
                 pathLength: 0,
                 opacity: 0,
               }}
-              animate={{
-                pathLength: 1,
-                opacity: 1,
-              }}
+              animate={
+  snoopyIsVisible
+    ? {
+        pathLength: 1,
+        opacity: 1,
+      }
+    : {
+        pathLength: 0,
+        opacity: 0,
+      }
+}
               transition={{
                 pathLength: {
                   duration: 0.9,
@@ -1448,7 +1480,17 @@ function SnoopyWithFlowers() {
             ry="8"
             transform="rotate(10 277 104)"
             initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={
+  snoopyIsVisible
+    ? {
+        opacity: 1,
+        scale: 1,
+      }
+    : {
+        opacity: 0,
+        scale: 0,
+      }
+}
             transition={{
               delay: 1.58,
               duration: 0.35,
@@ -1463,7 +1505,17 @@ function SnoopyWithFlowers() {
             rx="3.5"
             ry="6"
             initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={
+  snoopyIsVisible
+    ? {
+        opacity: 1,
+        scale: 1,
+      }
+    : {
+        opacity: 0,
+        scale: 0,
+      }
+}
             transition={{
               delay: 1.65,
               duration: 0.3,
@@ -1497,10 +1549,17 @@ function SnoopyWithFlowers() {
                   pathLength: 0,
                   opacity: 0,
                 }}
-                animate={{
-                  pathLength: 1,
-                  opacity: 1,
-                }}
+                animate={
+  snoopyIsVisible
+    ? {
+        pathLength: 1,
+        opacity: 1,
+      }
+    : {
+        pathLength: 0,
+        opacity: 0,
+      }
+}
                 transition={{
                   pathLength: {
                     duration: 0.72,
@@ -1524,12 +1583,21 @@ function SnoopyWithFlowers() {
             pathLength: 0,
             opacity: 0,
           }}
-          animate={{
-            pathLength: 1,
-            opacity: 1,
-            scale: [1, 1.08, 1],
-            y: [0, -4, 0],
-          }}
+          animate={
+  snoopyIsVisible
+    ? {
+        pathLength: 1,
+        opacity: 1,
+        scale: [1, 1.08, 1],
+        y: [0, -4, 0],
+      }
+    : {
+        pathLength: 0,
+        opacity: 0,
+        scale: 1,
+        y: 0,
+      }
+}
           transition={{
             pathLength: {
               duration: 0.8,
