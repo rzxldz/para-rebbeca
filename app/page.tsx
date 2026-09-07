@@ -1248,9 +1248,9 @@ const preludeStars = Array.from({ length: 24 }, (_, index) => ({
   size: 5 + (index % 4) * 3,
 }));
 
-const progressStorageKey = "para-Rebbeca-progress";
-const favoritesStorageKey = "para-Rebbeca-favorites";
-const audioPreferencesStorageKey = "para-Rebbeca-audio-preferences";
+const progressStorageKey = "para-rebbeca-progress";
+const favoritesStorageKey = "para-rebbeca-favorites";
+const audioPreferencesStorageKey = "para-rebbeca-audio-preferences";
 
 type ExperienceStage =
   | "intro"
@@ -1695,6 +1695,8 @@ export default function Home() {
   const [showFinal, setShowFinal] = useState(false);
   const [showFinalPrelude, setShowFinalPrelude] = useState(false);
   const [showSongIndex, setShowSongIndex] = useState(false);
+  const [isOpeningFinalLetter, setIsOpeningFinalLetter] =
+    useState(false);
 
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [initialLoadProgress, setInitialLoadProgress] = useState(8);
@@ -1720,6 +1722,9 @@ export default function Home() {
   >({});
 
   const audioRef = useRef<HTMLVideoElement | null>(null);
+  const ambientAudioRef = useRef<HTMLAudioElement | null>(null);
+  const ambientFadeFrameRef = useRef<number | null>(null);
+  const ambientWasUnlockedRef = useRef(false);
   const loadedSongIndexRef = useRef<number | null>(null);
   const songCarouselRef = useRef<HTMLDivElement | null>(null);
   const songCarouselItemRefs =
@@ -1755,6 +1760,8 @@ export default function Home() {
 
 useEffect(() => {
   return () => {
+    cancelAmbientFade();
+
     if (lyricsAutoScrollTimeoutRef.current !== null) {
       window.clearTimeout(
         lyricsAutoScrollTimeoutRef.current
@@ -2125,6 +2132,12 @@ function continueExperience() {
     return;
   }
 
+  /*
+    "Continuar" también cuenta como interacción del usuario.
+    Desbloqueamos la pista ambiental aunque después entremos
+    directamente a las canciones.
+  */
+  void unlockAndStartAmbientMusic();
   setHasEntered(true);
   setShowSongIndex(false);
   setShowOnlyFavorites(false);
@@ -2404,6 +2417,141 @@ const experienceProgressPercentage = showFinal
           ? 8
           : 0;
 
+const ambientTargetVolume = 0.14;
+
+function cancelAmbientFade() {
+  if (ambientFadeFrameRef.current !== null) {
+    window.cancelAnimationFrame(
+      ambientFadeFrameRef.current
+    );
+    ambientFadeFrameRef.current = null;
+  }
+}
+
+async function fadeAmbientMusic(
+  targetVolume: number,
+  duration = 1100,
+  pauseWhenSilent = false
+) {
+  const ambientAudio = ambientAudioRef.current;
+
+  if (!ambientAudio) {
+    return;
+  }
+
+  cancelAmbientFade();
+
+  if (targetVolume > 0 && ambientAudio.paused) {
+    try {
+      ambientAudio.volume = Math.min(
+        ambientAudio.volume,
+        0.02
+      );
+
+      await ambientAudio.play();
+      ambientWasUnlockedRef.current = true;
+    } catch (error) {
+      console.warn(
+        "El navegador todavía no permitió la música ambiental:",
+        error
+      );
+      return;
+    }
+  }
+
+  const initialVolume = ambientAudio.volume;
+  const startedAt = performance.now();
+
+  const animateVolume = (now: number) => {
+    const elapsed = now - startedAt;
+    const progress = Math.min(1, elapsed / duration);
+    const easedProgress =
+      1 - Math.pow(1 - progress, 3);
+
+    ambientAudio.volume =
+      initialVolume +
+      (targetVolume - initialVolume) * easedProgress;
+
+    if (progress < 1) {
+      ambientFadeFrameRef.current =
+        window.requestAnimationFrame(animateVolume);
+      return;
+    }
+
+    ambientAudio.volume = targetVolume;
+    ambientFadeFrameRef.current = null;
+
+    if (pauseWhenSilent && targetVolume === 0) {
+      ambientAudio.pause();
+    }
+  };
+
+  ambientFadeFrameRef.current =
+    window.requestAnimationFrame(animateVolume);
+}
+
+async function unlockAndStartAmbientMusic() {
+  const ambientAudio = ambientAudioRef.current;
+
+  if (!ambientAudio) {
+    return;
+  }
+
+  ambientAudio.loop = true;
+  ambientAudio.volume = 0;
+
+  try {
+    await ambientAudio.play();
+    ambientWasUnlockedRef.current = true;
+    void fadeAmbientMusic(ambientTargetVolume, 1400);
+  } catch (error) {
+    console.warn(
+      "No se pudo iniciar la música ambiental:",
+      error
+    );
+  }
+}
+
+function enterExperience() {
+  setHasEntered(true);
+  void unlockAndStartAmbientMusic();
+}
+
+useEffect(() => {
+  if (!hasEntered) {
+    return;
+  }
+
+  const shouldPlayAmbient =
+    !showSongs ||
+    showFinalPrelude ||
+    showFinal ||
+    isOpeningFinalLetter;
+
+  if (shouldPlayAmbient) {
+    /*
+      Si la persona ya tocó "Entrar" o "Continuar",
+      el elemento de audio quedó autorizado por el navegador.
+    */
+    if (ambientWasUnlockedRef.current) {
+      void fadeAmbientMusic(
+        ambientTargetVolume,
+        1200
+      );
+    }
+
+    return;
+  }
+
+  void fadeAmbientMusic(0, 700, true);
+}, [
+  hasEntered,
+  showSongs,
+  showFinalPrelude,
+  showFinal,
+  isOpeningFinalLetter,
+]);
+
 async function playSongSnippet(songIndex: number): Promise<boolean> {
   const audio = audioRef.current;
   const song = songs[songIndex];
@@ -2411,6 +2559,8 @@ async function playSongSnippet(songIndex: number): Promise<boolean> {
   if (!audio || !song) {
     return false;
   }
+
+  void fadeAmbientMusic(0, 650, true);
 
 const audioFile = `/audio/${song.number}.mp4`;
 
@@ -2690,6 +2840,7 @@ function handleSongDragEnd(
 }
 
 function openFinalLetter() {
+  setIsOpeningFinalLetter(true);
   setShowFinalPrelude(false);
   setShowFinal(false);
 
@@ -2700,6 +2851,7 @@ function openFinalLetter() {
   */
   window.setTimeout(() => {
     setShowFinal(true);
+    setIsOpeningFinalLetter(false);
 
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
@@ -2835,6 +2987,15 @@ function confirmRestartExperience() {
           </motion.section>
         )}
       </AnimatePresence>
+
+      <audio
+        ref={ambientAudioRef}
+        src="/audio/fondo.mp3"
+        preload="auto"
+        loop
+        aria-hidden="true"
+        style={{ display: "none" }}
+      />
 
       <video
   ref={audioRef}
@@ -2976,7 +3137,7 @@ function confirmRestartExperience() {
         <motion.button
           type="button"
           className="welcomeButton"
-          onClick={() => setHasEntered(true)}
+          onClick={enterExperience}
           whileHover={{
             scale: 1.03,
             y: -2,
@@ -3140,7 +3301,7 @@ function confirmRestartExperience() {
 
           <button
             type="button"
-            className="RebbecaButton"
+            className="rebbecaButton"
             onClick={() => setShowHeart(true)}
           >
             <motion.span
