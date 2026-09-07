@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Para Regina: 40 canciones y algo que quería decirte";
+  "Para Rebbeca: 40 canciones y algo que quería decirte";
 export const size = {
   width: 1200,
   height: 630,
@@ -88,7 +88,7 @@ export default function OpenGraphImage() {
               textAlign: "center",
             }}
           >
-            Para Regina
+            Para Rebbeca
           </div>
 
           <div

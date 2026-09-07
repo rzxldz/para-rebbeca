@@ -1248,9 +1248,9 @@ const preludeStars = Array.from({ length: 24 }, (_, index) => ({
   size: 5 + (index % 4) * 3,
 }));
 
-const progressStorageKey = "para-regina-progress";
-const favoritesStorageKey = "para-regina-favorites";
-const audioPreferencesStorageKey = "para-regina-audio-preferences";
+const progressStorageKey = "para-Rebbeca-progress";
+const favoritesStorageKey = "para-Rebbeca-favorites";
+const audioPreferencesStorageKey = "para-Rebbeca-audio-preferences";
 
 type ExperienceStage =
   | "intro"
@@ -2543,7 +2543,7 @@ function handleCurrentCoverLoaded() {
 
   /*
     La portada ya cargó. Esta pausa breve permite que termine
-    su animación antes de acompañar a Regina hacia la letra.
+    su animación antes de acompañar a Rebbeca hacia la letra.
   */
   lyricsAutoScrollTimeoutRef.current = window.setTimeout(() => {
     window.requestAnimationFrame(() => {
@@ -2900,7 +2900,7 @@ function confirmRestartExperience() {
       className="welcomeScreen"
       role="dialog"
       aria-modal="true"
-      aria-label="Bienvenida para Regina"
+      aria-label="Bienvenida para Rebbeca"
       initial={{ opacity: 1 }}
       exit={{
         opacity: 0,
@@ -2953,7 +2953,7 @@ function confirmRestartExperience() {
         </p>
 
         <h2 className="welcomeTitle">
-          Para Regina
+          Para Rebbeca
         </h2>
 
         <p className="welcomeText">
@@ -3140,14 +3140,14 @@ function confirmRestartExperience() {
 
           <button
             type="button"
-            className="reginaButton"
+            className="RebbecaButton"
             onClick={() => setShowHeart(true)}
           >
             <motion.span
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.95 }}
             >
-              Regina
+              Rebbeca
             </motion.span>
           </button>
 
@@ -3436,7 +3436,7 @@ function confirmRestartExperience() {
                 ease: "easeOut",
               }}
             >
-              <span>Para Regina</span>
+              <span>Para Rebbeca</span>
               <strong>{currentSong.title}</strong>
               <small>{currentSong.artist}</small>
             </motion.div>
@@ -3878,7 +3878,7 @@ function confirmRestartExperience() {
 
     <strong>
       {currentSongIndex === songs.length - 1
-        ? "Abrir la carta para Regina"
+        ? "Abrir la carta para Rebbeca"
         : songs[currentSongIndex + 1].title}
     </strong>
   </div>
@@ -4010,7 +4010,7 @@ function confirmRestartExperience() {
               Nuestra banda sonora
             </p>
 
-            <h2>40 canciones para Regina</h2>
+            <h2>40 canciones para Rebbeca</h2>
 
             <p>
               Puedes recorrerlas en orden o elegir directamente una
@@ -4377,7 +4377,7 @@ function confirmRestartExperience() {
             type="button"
             className="finalInitial"
             onClick={handleSecretTap}
-            aria-label="Inicial de Regina"
+            aria-label="Inicial de Rebbeca"
             initial={{ opacity: 0, scale: 0 }}
             animate={{
               opacity: 1,
@@ -4405,7 +4405,7 @@ function confirmRestartExperience() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3, duration: 0.8 }}
         >
-          Para ti, Regina
+          Para ti, Rebbeca
         </motion.h2>
 
         <motion.div

@@ -16,29 +16,29 @@ const metadataBase = new URL(
 export const metadata: Metadata = {
   metadataBase,
   title: {
-    default: "🌸 Para Regina",
-    template: "%s · Para Regina",
+    default: "🌸 Para Rebbeca",
+    template: "%s · Para Rebbeca",
   },
   description: "40 canciones y algo que quería decirte.",
-  applicationName: "Para Regina",
+  applicationName: "Para Rebbeca",
   openGraph: {
     type: "website",
     locale: "es_MX",
-    title: "Para Regina",
+    title: "Para Rebbeca",
     description: "40 canciones y algo que quería decirte.",
-    siteName: "Para Regina",
+    siteName: "Para Rebbeca",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Para Regina: 40 canciones y algo que quería decirte",
+        alt: "Para Rebbeca: 40 canciones y algo que quería decirte",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Para Regina",
+    title: "Para Rebbeca",
     description: "40 canciones y algo que quería decirte.",
     images: ["/opengraph-image"],
   },

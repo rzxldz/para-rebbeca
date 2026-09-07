@@ -124,7 +124,7 @@ h1 span {
   line-height: 1.35;
 }
 
-.reginaButton {
+.RebbecaButton {
   display: block;
   margin: 45px auto 0;
   border: none;
@@ -132,7 +132,7 @@ h1 span {
   color: var(--cream);
 }
 
-.reginaButton span {
+.RebbecaButton span {
   display: block;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(4.5rem, 13vw, 8.5rem);
@@ -3008,7 +3008,7 @@ input {
 }
 
 .songCoverFlowInformation::before {
-  content: "PARA REGINA";
+  content: "PARA Rebbeca";
   color: #873a52;
   font-size: 0.56rem;
   font-weight: 800;
