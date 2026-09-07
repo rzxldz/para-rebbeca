@@ -2127,17 +2127,16 @@ function toggleFavoriteSong(songNumber: string) {
   });
 }
 
-function continueExperience() {
+async function continueExperience() {
   if (savedSongIndex === null) {
     return;
   }
 
   /*
-    "Continuar" también cuenta como interacción del usuario.
-    Desbloqueamos la pista ambiental aunque después entremos
-    directamente a las canciones.
+    "Continuar" también es un gesto del usuario.
+    Intentamos desbloquear el audio antes de cambiar de pantalla.
   */
-  void unlockAndStartAmbientMusic();
+  await unlockAndStartAmbientMusic();
   setHasEntered(true);
   setShowSongIndex(false);
   setShowOnlyFavorites(false);
@@ -2417,7 +2416,7 @@ const experienceProgressPercentage = showFinal
           ? 8
           : 0;
 
-const ambientTargetVolume = 0.14;
+const ambientTargetVolume = 0.22;
 
 function cancelAmbientFade() {
   if (ambientFadeFrameRef.current !== null) {
@@ -2443,9 +2442,10 @@ async function fadeAmbientMusic(
 
   if (targetVolume > 0 && ambientAudio.paused) {
     try {
-      ambientAudio.volume = Math.min(
-        ambientAudio.volume,
-        0.02
+      ambientAudio.muted = false;
+      ambientAudio.volume = Math.max(
+        0.025,
+        Math.min(ambientAudio.volume, 0.04)
       );
 
       await ambientAudio.play();
@@ -2494,27 +2494,52 @@ async function unlockAndStartAmbientMusic() {
   const ambientAudio = ambientAudioRef.current;
 
   if (!ambientAudio) {
-    return;
+    return false;
   }
 
+  cancelAmbientFade();
+
   ambientAudio.loop = true;
-  ambientAudio.volume = 0;
+  ambientAudio.muted = false;
+
+  /*
+    Empezamos con un volumen muy bajo, pero no en cero.
+    Esto evita problemas de reproducción silenciosa en algunos
+    navegadores móviles y después hacemos el fade-in.
+  */
+  ambientAudio.volume = 0.025;
+
+  if (ambientAudio.ended) {
+    ambientAudio.currentTime = 0;
+  }
 
   try {
     await ambientAudio.play();
     ambientWasUnlockedRef.current = true;
-    void fadeAmbientMusic(ambientTargetVolume, 1400);
+
+    void fadeAmbientMusic(
+      ambientTargetVolume,
+      1800
+    );
+
+    return true;
   } catch (error) {
     console.warn(
       "No se pudo iniciar la música ambiental:",
       error
     );
+
+    return false;
   }
 }
 
-function enterExperience() {
+async function enterExperience() {
+  /*
+    Primero iniciamos el audio dentro del gesto real del usuario.
+    Después cambiamos la pantalla.
+  */
+  await unlockAndStartAmbientMusic();
   setHasEntered(true);
-  void unlockAndStartAmbientMusic();
 }
 
 useEffect(() => {
@@ -2994,7 +3019,13 @@ function confirmRestartExperience() {
         preload="auto"
         loop
         aria-hidden="true"
-        style={{ display: "none" }}
+        style={{
+          position: "fixed",
+          width: 1,
+          height: 1,
+          opacity: 0,
+          pointerEvents: "none",
+        }}
       />
 
       <video
@@ -3301,7 +3332,7 @@ function confirmRestartExperience() {
 
           <button
             type="button"
-            className="rebbecaButton"
+            className="nameButton"
             onClick={() => setShowHeart(true)}
           >
             <motion.span
