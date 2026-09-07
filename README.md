@@ -8,7 +8,7 @@ El proyecto está diseñado como una experiencia progresiva en la que el conteni
 
 ## Demo
 
-[![Ver sitio web](https://img.shields.io/badge/Ver%20sitio%20web-Vercel-black?style=for-the-badge)](https://para-regina.vercel.app/)
+[![Ver sitio web](https://img.shields.io/badge/Ver%20sitio%20web-Vercel-black?style=for-the-badge)](https://para-rebbeca.vercel.app/)
 
 ---
 
